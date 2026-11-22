@@ -29,10 +29,14 @@ interface TripDao {
     @Query("UPDATE catches SET tripId = NULL WHERE tripId = :tripId")
     suspend fun detachCatches(tripId: Long)
 
-    /** Deletes the trip; its catches stay as separate catches. */
+    @Query("DELETE FROM track_points WHERE tripId = :tripId")
+    suspend fun deleteRoute(tripId: Long)
+
+    /** Deletes the trip and its route; its catches stay as separate catches. */
     @Transaction
     suspend fun delete(id: Long) {
         detachCatches(id)
+        deleteRoute(id)
         deleteTrip(id)
     }
 }

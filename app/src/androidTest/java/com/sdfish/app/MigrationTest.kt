@@ -11,7 +11,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Catches saved by version 1 of the database must survive the update to version 2. */
+/** Catches saved by version 1 of the database must survive the updates to the latest version. */
 @RunWith(AndroidJUnit4::class)
 class MigrationTest {
 
@@ -43,6 +43,7 @@ class MigrationTest {
             assertEquals("old catch", catches[0].note)
             assertNull(catches[0].tripId)
             assertEquals(0, runBlocking { room.tripDao().observeWithCounts().first() }.size)
+            assertEquals(0, runBlocking { room.trackDao().observeByTrip(1).first() }.size)
         } finally {
             room.close()
             context.deleteDatabase(name)

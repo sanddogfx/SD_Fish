@@ -80,4 +80,12 @@
     <string name="fish_time_out_of_trip">Время рыбы должно быть в пределах рыбалки: %1$s – %2$s</string>
     <string name="trip_end_before_start">Конец рыбалки не может быть раньше начала</string>
     <string name="trip_must_cover_catches">Рыбалка должна включать время всех её рыб: %1$s – %2$s</string>
+    <string name="section_route">Маршрут</string>
+    <string name="route_distance">Пройдено: %1$s</string>
+    <string name="distance_m">%1$d м</string>
+    <string name="distance_km">%1$s км</string>
+    <string name="route_recording">Записываю маршрут</string>
+    <string name="route_waiting">Маршрут записывается. Он появится, когда ты начнёшь двигаться.</string>
+    <string name="route_none">Маршрут не записан</string>
+    <string name="route_channel">Запись маршрута</string>
 </resources>

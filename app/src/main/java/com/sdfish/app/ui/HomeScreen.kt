@@ -53,6 +53,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -74,6 +75,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.sdfish.app.BuildConfig
 import com.sdfish.app.Formats
+import com.sdfish.app.route.RouteService
 import com.sdfish.app.R
 import com.sdfish.app.SdFishApp
 import com.sdfish.app.data.CatchEntry
@@ -109,6 +111,12 @@ fun HomeScreen(
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var showSettings by rememberSaveable { mutableStateOf(false) }
     var chooseTrip by rememberSaveable { mutableStateOf(false) }
+
+    // Keep recording the route of a running trip, also after the phone restarted the app.
+    val activeId = activeTrip?.id
+    LaunchedEffect(activeId) {
+        if (activeId != null) RouteService.start(context, activeId)
+    }
 
     Scaffold(
         topBar = {
@@ -184,6 +192,7 @@ fun HomeScreen(
                     trip = trip,
                     onOpen = { onOpenTrip(trip.id) },
                     onFinish = {
+                        RouteService.stop(context)
                         scope.launch { db.tripDao().upsert(trip.copy(endTime = System.currentTimeMillis())) }
                     },
                 )

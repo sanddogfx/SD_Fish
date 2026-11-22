@@ -2,6 +2,10 @@ package com.sdfish.app
 
 import android.Manifest
 import android.graphics.Bitmap
+import android.os.Build
+import com.sdfish.app.data.TrackPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -27,8 +31,11 @@ class ScreenshotTour {
 
     @get:Rule(order = 0)
     val permissions: GrantPermissionRule = GrantPermissionRule.grant(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
+        *listOfNotNull(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            if (Build.VERSION.SDK_INT >= 33) Manifest.permission.POST_NOTIFICATIONS else null,
+        ).toTypedArray()
     )
 
     @get:Rule(order = 1)
@@ -47,6 +54,18 @@ class ScreenshotTour {
         compose.runOnUiThread {
             val window = compose.activity.window
             WindowCompat.getInsetsController(window, window.decorView).hide(WindowInsetsCompat.Type.ime())
+        }
+    }
+
+    private fun addSampleRoute() = runBlocking {
+        val db = SdFishApp.from(InstrumentationRegistry.getInstrumentation().targetContext).database
+        val trip = db.tripDao().observeActive().first() ?: return@runBlocking
+        val now = System.currentTimeMillis()
+        listOf(
+            52.2297 to 21.0122, 52.2301 to 21.0131, 52.2306 to 21.0139, 52.2310 to 21.0150,
+            52.2316 to 21.0157, 52.2321 to 21.0166, 52.2324 to 21.0178, 52.2330 to 21.0185,
+        ).forEachIndexed { i, (lat, lon) ->
+            db.trackDao().insert(TrackPoint(tripId = trip.id, time = now + i * 60_000L, latitude = lat, longitude = lon, accuracyMeters = 5f))
         }
     }
 
@@ -83,9 +102,14 @@ class ScreenshotTour {
         tap("tab_catches")
         shot("09_catch_list")
 
-        // Open the running trip, see its fish, end it.
+        // The emulator does not move, so add a short walk along the shore to show the route.
+        addSampleRoute()
+
+        // Open the running trip, see its fish and route, end it.
         tap("active_trip")
         shot("10_trip_running", settleMs = 3000)
+        compose.onNodeWithTag("route_map").performScrollTo()
+        shot("10b_trip_route", settleMs = 5000)
         tap("trip_finish")
         tap("tab_trips")
         shot("11_trip_list")
