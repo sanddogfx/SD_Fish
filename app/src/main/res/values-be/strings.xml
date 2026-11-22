@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="version_label">версія %1$s</string>
+    <string name="tab_catches">Улоў</string>
+    <string name="tab_map">Карта</string>
+    <string name="add_catch">Улоў</string>
+    <string name="empty_list">Пакуль няма ніводнага ўлову.\nНацісні «Улоў», каб запісаць першы.</string>
+    <string name="no_coords">Без каардынат</string>
+    <string name="tap_again_to_open">Націсні яшчэ раз, каб адкрыць</string>
+
+    <string name="new_catch">Новы ўлоў</string>
+    <string name="edit_catch">Улоў</string>
+    <string name="back">Назад</string>
+    <string name="delete">Выдаліць</string>
+    <string name="delete_confirm_title">Выдаліць улоў?</string>
+    <string name="delete_confirm_text">Запіс і фота будуць выдаленыя без магчымасці аднаўлення.</string>
+    <string name="cancel">Скасаваць</string>
+    <string name="save">Захаваць</string>
+
+    <string name="section_place">Месца і час</string>
+    <string name="section_fish">Рыба</string>
+    <string name="section_photo">Фота</string>
+    <string name="locating">Вызначаю месца…</string>
+    <string name="location_error">Не атрымалася вызначыць месца. Правер, ці ўключаны GPS, або адзнач кропку на карце.</string>
+    <string name="location_denied">Няма доступу да геалакацыі. Адзнач кропку на карце ўручную.</string>
+    <string name="location_hint">Націсні на карту або перацягні метку, каб паправіць месца.</string>
+    <string name="location_accuracy">дакладнасць ±%1$d м</string>
+    <string name="refresh_location">Вызначыць нанова</string>
+
+    <string name="species_label">Від рыбы</string>
+    <string name="species_unknown">Від не пазначаны</string>
+    <string name="weight_label">Вага, кг</string>
+    <string name="length_label">Даўжыня, см</string>
+    <string name="weight_kg">%1$s кг</string>
+    <string name="length_cm">%1$s см</string>
+
+    <string name="take_photo">Камера</string>
+    <string name="pick_photo">Галерэя</string>
+    <string name="remove_photo">Прыбраць</string>
+    <string name="no_camera">Не знойдзена праграма камеры</string>
+
+    <string name="note_label">Нататка: прынада, глыбіня, надвор\'е…</string>
+
+    <string name="update_available">Даступная новая версія 0.1.%1$d</string>
+    <string name="update_downloading">Спампоўваю…</string>
+    <string name="update_failed">Не атрымалася спампаваць. Правер інтэрнэт і паспрабуй яшчэ раз.</string>
+    <string name="update_later">Пазней</string>
+    <string name="update_now">Абнавіць</string>
+    <string name="update_allow_install">Дазволь усталёўку для SD_Fish, вярніся і націсні «Абнавіць» яшчэ раз</string>
+
+    <string name="settings">Налады</string>
+    <string name="language">Мова</string>
+    <string name="language_system">Як у сістэме</string>
+    <string name="close">Закрыць</string>
+
+    <string name="tab_trips">Рыбалкі</string>
+    <string name="start_fishing">Пачаць рыбалку</string>
+    <string name="add_fish">Дадаць рыбу</string>
+    <string name="end_fishing">Завяршыць</string>
+    <string name="active_trip">Ідзе рыбалка</string>
+    <string name="trip_title_new">Новая рыбалка</string>
+    <string name="trip_title">Рыбалка</string>
+    <string name="section_method">Спосаб лоўлі</string>
+    <string name="section_place_only">Месца</string>
+    <string name="section_time">Час</string>
+    <string name="trip_started">Пачатак</string>
+    <string name="trip_ended">Канец</string>
+    <string name="trip_duration">Працягласць: %1$s</string>
+    <string name="trip_in_progress">ідзе</string>
+    <string name="trip_catches">Улоў (%1$d)</string>
+    <string name="trip_no_catches">Пакуль без рыбы</string>
+    <string name="trips_empty">Рыбалак пакуль няма.\nНацісні «Пачаць рыбалку», калі прыйдзеш на вадаём.</string>
+    <string name="fish_count">рыб: %1$d</string>
+    <string name="delete_trip_title">Выдаліць рыбалку?</string>
+    <string name="delete_trip_text">Рыба з гэтай рыбалкі застанецца ў спісе ўловаў.</string>
+    <string name="from_trip">Рыбалка ад %1$s</string>
+    <string name="method_not_set">Не пазначаны</string>
+</resources>

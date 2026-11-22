@@ -100,5 +100,13 @@ class ScreenshotTour {
         shot("14_map_russian", settleMs = 4000)
         tap("tab_trips")
         shot("15_trips_russian")
+        tap("tab_catches")
+        shot("16_catches_russian")
+
+        tap("settings")
+        tap("language_be")
+        shot("17_belarusian", settleMs = 4000)
+        tap("tab_catches")
+        shot("18_catches_belarusian")
     }
 }
