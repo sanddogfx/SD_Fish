@@ -206,7 +206,6 @@ fun MethodPicker(selected: String?, allowNone: Boolean, onSelect: (String?) -> U
             value = if (selected == null) notSet else FishingMethods.displayName(selected),
             onValueChange = {},
             readOnly = true,
-            label = { Text(stringResource(R.string.section_method)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             singleLine = true,
             modifier = Modifier
