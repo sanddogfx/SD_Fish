@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Fish body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,54 C36,39 58,37 71,54 C58,71 36,69 28,54 Z" />
+    <!-- Tail -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M69,54 L83,42 L80,54 L83,66 Z" />
+    <!-- Eye -->
+    <path
+        android:fillColor="#00696B"
+        android:pathData="M35,51 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0 Z" />
+</vector>
