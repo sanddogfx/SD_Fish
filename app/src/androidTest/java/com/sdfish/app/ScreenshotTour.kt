@@ -15,6 +15,11 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
+import com.sdfish.app.data.FishingTrip
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.swipeUp
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.hasTestTag
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -183,6 +188,23 @@ class ScreenshotTour {
         compose.onNodeWithTag("swipe_trip_$pastTripId").performTouchInput { swipeLeft() }
         shot("11a3_swipe_delete_trip")
         tap("cancel_delete")
+
+        // A long list scrolled to the end: the last card stays clear of the buttons.
+        val oldestTripId = runBlocking {
+            val dao = SdFishApp.from(InstrumentationRegistry.getInstrumentation().targetContext).database.tripDao()
+            val day = 24L * 60 * 60 * 1000
+            val now = System.currentTimeMillis()
+            (30..37).map { d ->
+                dao.upsert(FishingTrip(startTime = now - d * day, endTime = now - d * day + 2 * 60 * 60 * 1000,
+                    latitude = null, longitude = null, method = "spinning", note = ""))
+            }.last()
+        }
+        compose.onNodeWithTag("trip_list").performScrollToNode(hasTestTag("swipe_trip_$oldestTripId"))
+        compose.onNodeWithTag("trip_list").performTouchInput { swipeUp() }
+        shot("11a4_long_list_end")
+        val lastCard = compose.onNodeWithTag("swipe_trip_$oldestTripId").getUnclippedBoundsInRoot()
+        val buttons = compose.onNodeWithTag("add_past_trip").getUnclippedBoundsInRoot()
+        check(lastCard.bottom <= buttons.top) { "last card ${lastCard.bottom} overlaps buttons ${buttons.top}" }
 
         // No trip running: adding a fish asks for a trip. Start a new one; the fish form opens right after.
         tap("tab_catches")

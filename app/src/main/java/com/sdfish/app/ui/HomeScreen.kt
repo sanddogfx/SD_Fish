@@ -58,10 +58,10 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -167,73 +167,76 @@ fun HomeScreen(
                 indicatorColor = MaterialTheme.colorScheme.primaryContainer,
                 selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
             )
-            NavigationBar {
-                NavigationBarItem(
-                    selected = tab == 0,
-                    onClick = { tab = 0 },
-                    colors = navColors,
-                    modifier = Modifier.testTag("tab_trips"),
-                    icon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
-                    label = { Text(stringResource(R.string.tab_trips)) },
-                )
-                NavigationBarItem(
-                    selected = tab == 1,
-                    onClick = { tab = 1 },
-                    colors = navColors,
-                    modifier = Modifier.testTag("tab_catches"),
-                    icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
-                    label = { Text(stringResource(R.string.tab_catches)) },
-                )
-                NavigationBarItem(
-                    selected = tab == 2,
-                    onClick = { tab = 2 },
-                    colors = navColors,
-                    modifier = Modifier.testTag("tab_map"),
-                    icon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
-                    label = { Text(stringResource(R.string.tab_map)) },
-                )
-            }
-        },
-        // With no trip running, the trips and map tabs show two buttons across the bottom.
-        floatingActionButtonPosition = if (activeTrip == null && tab != 1) FabPosition.Center else FabPosition.End,
-        floatingActionButton = {
-            val active = activeTrip
-            when {
-                active != null -> GradientFab(
-                    text = stringResource(R.string.add_fish),
-                    icon = Icons.Filled.Add,
-                    onClick = { onAddFishToTrip(active.id) },
-                    modifier = Modifier.testTag("add_fish"),
-                )
-                tab == 1 -> GradientFab(
-                    // Every fish belongs to a trip: ask which one, or start a new one.
-                    text = stringResource(R.string.add_catch),
-                    icon = Icons.Filled.Add,
-                    onClick = { chooseTrip = true },
-                    modifier = Modifier.testTag("add_catch"),
-                )
-                // Two buttons side by side across the screen, so neither hides the list.
-                else -> Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                ) {
-                    Surface(
-                        onClick = onAddPastTrip,
-                        shape = RoundedCornerShape(50),
-                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        shadowElevation = 6.dp,
-                        modifier = Modifier.weight(1f).testTag("add_past_trip"),
-                    ) {
-                        Box(Modifier.padding(vertical = 16.dp, horizontal = 12.dp), contentAlignment = Alignment.Center) {
-                            Text(stringResource(R.string.add_trip), style = MaterialTheme.typography.labelLarge, maxLines = 1)
+            // The action buttons sit in their own bar above the tabs, so they never cover the list.
+            Column {
+                Surface(color = NavigationBarDefaults.containerColor) {
+                    Box(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 4.dp)) {
+                        val active = activeTrip
+                        when {
+                            active != null -> GradientFab(
+                                text = stringResource(R.string.add_fish),
+                                icon = Icons.Filled.Add,
+                                onClick = { onAddFishToTrip(active.id) },
+                                fill = true,
+                                modifier = Modifier.fillMaxWidth().testTag("add_fish"),
+                            )
+                            tab == 1 -> GradientFab(
+                                // Every fish belongs to a trip: ask which one, or start a new one.
+                                text = stringResource(R.string.add_catch),
+                                icon = Icons.Filled.Add,
+                                onClick = { chooseTrip = true },
+                                fill = true,
+                                modifier = Modifier.fillMaxWidth().testTag("add_catch"),
+                            )
+                            else -> Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                // Outlined in the accent colour so it stands out from the cards.
+                                Surface(
+                                    onClick = onAddPastTrip,
+                                    shape = RoundedCornerShape(50),
+                                    color = androidx.compose.ui.graphics.Color.Transparent,
+                                    contentColor = MaterialTheme.colorScheme.primary,
+                                    border = androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary),
+                                    modifier = Modifier.weight(1f).testTag("add_past_trip"),
+                                ) {
+                                    Box(Modifier.padding(vertical = 16.dp, horizontal = 12.dp), contentAlignment = Alignment.Center) {
+                                        Text(stringResource(R.string.add_trip), style = MaterialTheme.typography.labelLarge, maxLines = 1)
+                                    }
+                                }
+                                GradientFab(
+                                    text = stringResource(R.string.start_fishing),
+                                    icon = null,
+                                    onClick = onStartTrip,
+                                    fill = true,
+                                    modifier = Modifier.weight(1f).testTag("start_trip"),
+                                )
+                            }
                         }
                     }
-                    GradientFab(
-                        text = stringResource(R.string.start_fishing),
-                        icon = null,
-                        onClick = onStartTrip,
-                        fill = true,
-                        modifier = Modifier.weight(1f).testTag("start_trip"),
+                }
+                NavigationBar {
+                    NavigationBarItem(
+                        selected = tab == 0,
+                        onClick = { tab = 0 },
+                        colors = navColors,
+                        modifier = Modifier.testTag("tab_trips"),
+                        icon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
+                        label = { Text(stringResource(R.string.tab_trips)) },
+                    )
+                    NavigationBarItem(
+                        selected = tab == 1,
+                        onClick = { tab = 1 },
+                        colors = navColors,
+                        modifier = Modifier.testTag("tab_catches"),
+                        icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
+                        label = { Text(stringResource(R.string.tab_catches)) },
+                    )
+                    NavigationBarItem(
+                        selected = tab == 2,
+                        onClick = { tab = 2 },
+                        colors = navColors,
+                        modifier = Modifier.testTag("tab_map"),
+                        icon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
+                        label = { Text(stringResource(R.string.tab_map)) },
                     )
                 }
             }
@@ -464,7 +467,8 @@ private fun TripList(trips: List<TripWithCount>, onOpen: (Long) -> Unit, onDelet
         return
     }
     LazyColumn(
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
+        modifier = Modifier.testTag("trip_list"),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(trips, key = { it.trip.id }) { item ->
@@ -523,7 +527,7 @@ private fun CatchList(catches: List<CatchEntry>, onOpen: (Long) -> Unit, onDelet
         return
     }
     LazyColumn(
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(catches, key = { it.id }) { entry ->
