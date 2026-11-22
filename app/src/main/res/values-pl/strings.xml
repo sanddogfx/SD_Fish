@@ -89,4 +89,5 @@
     <string name="route_none">Brak nagranej trasy</string>
     <string name="route_channel">Nagrywanie trasy</string>
     <string name="change_place">Zmień miejsce</string>
+    <string name="trip_photos">Zdjęcia (%1$d)</string>
 </resources>

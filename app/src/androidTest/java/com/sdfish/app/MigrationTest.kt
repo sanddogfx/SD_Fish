@@ -44,6 +44,7 @@ class MigrationTest {
             assertNull(catches[0].tripId)
             assertEquals(0, runBlocking { room.tripDao().observeWithCounts().first() }.size)
             assertEquals(0, runBlocking { room.trackDao().observeByTrip(1).first() }.size)
+            assertEquals(0, runBlocking { room.tripPhotoDao().byTrip(1) }.size)
         } finally {
             room.close()
             context.deleteDatabase(name)

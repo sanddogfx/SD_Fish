@@ -13,6 +13,11 @@ import com.sdfish.app.SdFishApp
 import com.sdfish.app.data.CatchEntry
 import com.sdfish.app.data.FishingTrip
 import com.sdfish.app.data.TrackPoint
+import com.sdfish.app.data.TripPhoto
+import com.sdfish.app.PhotoStorage
+import android.net.Uri
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.sdfish.app.fetchCurrentLocation
 import com.sdfish.app.route.RouteService
 import kotlinx.coroutines.flow.Flow
@@ -54,6 +59,9 @@ class TripViewModel(app: Application, private val tripId: Long) : AndroidViewMod
 
     val route: Flow<List<TrackPoint>> =
         if (tripId == 0L) flowOf(emptyList()) else db.trackDao().observeByTrip(tripId)
+
+    val photos: Flow<List<TripPhoto>> =
+        if (tripId == 0L) flowOf(emptyList()) else db.tripPhotoDao().observeByTrip(tripId)
 
     val catches: Flow<List<CatchEntry>> =
         if (tripId == 0L) flowOf(emptyList()) else db.catchDao().observeByTrip(tripId)
@@ -160,10 +168,35 @@ class TripViewModel(app: Application, private val tripId: Long) : AndroidViewMod
         }
     }
 
+    /** Saves a picture just taken with the camera into [path]. */
+    fun addPhoto(path: String) {
+        viewModelScope.launch {
+            db.tripPhotoDao().insert(TripPhoto(tripId = tripId, path = path, addedAt = System.currentTimeMillis()))
+        }
+    }
+
+    fun importPhotos(uris: List<Uri>) {
+        viewModelScope.launch {
+            uris.forEach { uri ->
+                val file = withContext(Dispatchers.IO) { PhotoStorage.copyFromUri(getApplication(), uri, "trip") }
+                if (file != null) addPhoto(file.absolutePath)
+            }
+        }
+    }
+
+    fun deletePhoto(photo: TripPhoto) {
+        viewModelScope.launch {
+            db.tripPhotoDao().delete(photo)
+            withContext(Dispatchers.IO) { PhotoStorage.delete(photo.path) }
+        }
+    }
+
     fun delete(onDone: () -> Unit) {
         viewModelScope.launch {
             if (state.endTime == null) RouteService.stop(getApplication())
+            val photoFiles = db.tripPhotoDao().byTrip(tripId).map { it.path }
             tripDao.delete(tripId)
+            withContext(Dispatchers.IO) { photoFiles.forEach(PhotoStorage::delete) }
             onDone()
         }
     }

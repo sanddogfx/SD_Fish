@@ -7,11 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [CatchEntry::class, FishingTrip::class, TrackPoint::class], version = 3, exportSchema = true)
+@Database(entities = [CatchEntry::class, FishingTrip::class, TrackPoint::class, TripPhoto::class], version = 4, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun catchDao(): CatchDao
     abstract fun tripDao(): TripDao
     abstract fun trackDao(): TrackDao
+    abstract fun tripPhotoDao(): TripPhotoDao
 
     companion object {
         const val NAME = "sdfish.db"
@@ -41,9 +42,20 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /** Version 4 adds photos of trips. */
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `trip_photos` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`tripId` INTEGER NOT NULL, `path` TEXT NOT NULL, `addedAt` INTEGER NOT NULL)"
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_trip_photos_tripId` ON `trip_photos` (`tripId`)")
+            }
+        }
+
         fun create(context: Context, name: String = NAME): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, name)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                 .build()
     }
 }

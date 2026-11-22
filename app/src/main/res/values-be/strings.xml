@@ -89,4 +89,5 @@
     <string name="route_none">Маршрут не запісаны</string>
     <string name="route_channel">Запіс маршруту</string>
     <string name="change_place">Змяніць месца</string>
+    <string name="trip_photos">Фота (%1$d)</string>
 </resources>
