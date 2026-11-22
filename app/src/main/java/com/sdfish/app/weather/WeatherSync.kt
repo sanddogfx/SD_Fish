@@ -1,5 +1,6 @@
 package com.sdfish.app.weather
 
+import android.util.Log
 import com.sdfish.app.data.AppDatabase
 import com.sdfish.app.data.FishingTrip
 import com.sdfish.app.data.TripWeather
@@ -22,6 +23,7 @@ import kotlin.math.abs
  * again next time, so there is no background work draining the battery.
  */
 object WeatherSync {
+    private const val TAG = "WeatherSync"
     private val mutex = Mutex()
     private const val HOUR = 60 * 60 * 1000L
     private const val DAY = 24 * HOUR
@@ -30,8 +32,8 @@ object WeatherSync {
     private const val MAX_PER_RUN = 20
 
     suspend fun syncMissing(db: AppDatabase) = withContext(Dispatchers.IO) {
-        if (!mutex.tryLock()) return@withContext
-        try {
+        // A second caller waits, then finds nothing left to look up.
+        mutex.withLock {
             val dao = db.tripWeatherDao()
             val now = System.currentTimeMillis()
             db.tripDao().withPlace()
@@ -42,14 +44,14 @@ object WeatherSync {
                     val weather = try {
                         fetch(trip, now)
                     } catch (e: IOException) {
-                        return@withContext // Offline or the service is down: try again later.
+                        Log.w(TAG, "offline or service down, will retry later", e)
+                        return@withLock
                     } catch (e: Exception) {
-                        null // Odd answer for this trip: skip it.
+                        Log.w(TAG, "odd answer for trip ${trip.id}", e)
+                        null
                     }
                     if (weather != null) dao.upsert(weather)
                 }
-        } finally {
-            mutex.unlock()
         }
     }
 
@@ -76,6 +78,8 @@ object WeatherSync {
         try {
             if (conn.responseCode != HttpURLConnection.HTTP_OK) {
                 // A trip too recent for the archive, or too old for the forecast: try later.
+                val error = conn.errorStream?.bufferedReader()?.use { it.readText() }
+                Log.w(TAG, "HTTP ${conn.responseCode} for trip ${trip.id}: $error")
                 if (conn.responseCode >= 500) throw IOException("HTTP ${conn.responseCode}")
                 return null
             }
@@ -92,13 +96,14 @@ object WeatherSync {
         val startSec = trip.startTime / 1000
         var i = -1
         for (k in 0 until times.length()) if (times.getLong(k) <= startSec) i = k
-        if (i < 0) return null
+        if (i < 0) { Log.w(TAG, "no hour at trip start for trip ${trip.id}"); return null }
         fun value(name: String, at: Int): Double? {
             val arr = hourly.optJSONArray(name) ?: return null
             if (at < 0 || at >= arr.length() || arr.isNull(at)) return null
             return arr.getDouble(at)
         }
-        val temperature = value("temperature_2m", i) ?: return null // No data yet: try later.
+        val temperature = value("temperature_2m", i)
+            ?: run { Log.w(TAG, "no data yet for trip ${trip.id}"); return null } // Try later.
         val pressure = value("pressure_msl", i)
         val before = value("pressure_msl", i - 3)
         return TripWeather(

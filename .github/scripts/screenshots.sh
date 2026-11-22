@@ -11,4 +11,5 @@ adb shell am instrument -w com.sdfish.app.test/androidx.test.runner.AndroidJUnit
 mkdir -p screenshots
 adb pull /sdcard/Android/data/com.sdfish.app/files/screenshots/. screenshots/ || true
 adb logcat -d > screenshots/logcat.txt || true
+adb logcat -d -s WeatherSync:V AndroidRuntime:E > screenshots/app.log || true
 grep -q "^OK (" instrument.log
