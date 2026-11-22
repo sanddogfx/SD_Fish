@@ -76,6 +76,8 @@ fun TripScreen(
     val catches by vm.catches.collectAsStateWithLifecycle(initialValue = emptyList())
     val route by vm.route.collectAsStateWithLifecycle(initialValue = emptyList())
     val photos by vm.photos.collectAsStateWithLifecycle(initialValue = emptyList())
+    val weather by vm.weather.collectAsStateWithLifecycle(initialValue = null)
+    LaunchedEffect(Unit) { if (!vm.isNew) vm.syncWeather() }
     var confirmDelete by remember { mutableStateOf(false) }
 
     // The route is recorded with a notification; ask once to show it (Android 13+), then start either way.
@@ -199,6 +201,8 @@ fun TripScreen(
             }
 
             if (!vm.isNew) {
+                WeatherSection(weather = weather, startTime = s.startTime, hasPlace = s.latitude != null)
+
                 RouteSection(points = route, catches = catches, active = s.endTime == null)
 
                 PhotosEditor(

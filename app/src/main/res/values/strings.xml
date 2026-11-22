@@ -97,4 +97,49 @@
     <string name="theme">Theme</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_light">Light</string>
+    <string name="section_weather">Weather</string>
+    <string name="weather_pending">Weather will appear when the phone is online</string>
+    <string name="weather_no_place">Set the place to get the weather</string>
+    <string name="weather_clear">Clear</string>
+    <string name="weather_partly">Partly cloudy</string>
+    <string name="weather_overcast">Overcast</string>
+    <string name="weather_fog">Fog</string>
+    <string name="weather_drizzle">Drizzle</string>
+    <string name="weather_rain">Rain</string>
+    <string name="weather_snow">Snow</string>
+    <string name="weather_showers">Showers</string>
+    <string name="weather_thunder">Thunderstorm</string>
+    <string name="pressure_hpa">%1$s hPa</string>
+    <string name="pressure_mmhg">%1$s mmHg</string>
+    <string name="pressure_rising">rising</string>
+    <string name="pressure_falling">falling</string>
+    <string name="pressure_steady">steady</string>
+    <string name="wind_ms">%1$s m/s</string>
+    <string name="weather_pressure">Pressure</string>
+    <string name="weather_wind">Wind</string>
+    <string name="weather_clouds">Clouds</string>
+    <string name="weather_precip">Precipitation</string>
+    <string name="weather_moon">Moon</string>
+    <string name="precip_mm">%1$s mm</string>
+    <string name="percent">%1$s%%</string>
+    <string-array name="compass_points">
+        <item>N</item>
+        <item>NE</item>
+        <item>E</item>
+        <item>SE</item>
+        <item>S</item>
+        <item>SW</item>
+        <item>W</item>
+        <item>NW</item>
+    </string-array>
+    <string-array name="moon_phases">
+        <item>New moon</item>
+        <item>Waxing crescent</item>
+        <item>First quarter</item>
+        <item>Waxing gibbous</item>
+        <item>Full moon</item>
+        <item>Waning gibbous</item>
+        <item>Last quarter</item>
+        <item>Waning crescent</item>
+    </string-array>
 </resources>

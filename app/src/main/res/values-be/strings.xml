@@ -95,4 +95,49 @@
     <string name="theme">Тэма</string>
     <string name="theme_dark">Цёмная</string>
     <string name="theme_light">Светлая</string>
+    <string name="section_weather">Надвор\'е</string>
+    <string name="weather_pending">Надвор\'е з\'явіцца, калі тэлефон будзе ў сетцы</string>
+    <string name="weather_no_place">Пазнач месца, каб даведацца надвор\'е</string>
+    <string name="weather_clear">Ясна</string>
+    <string name="weather_partly">Пераменная воблачнасць</string>
+    <string name="weather_overcast">Хмурна</string>
+    <string name="weather_fog">Туман</string>
+    <string name="weather_drizzle">Імжа</string>
+    <string name="weather_rain">Дождж</string>
+    <string name="weather_snow">Снег</string>
+    <string name="weather_showers">Лівень</string>
+    <string name="weather_thunder">Навальніца</string>
+    <string name="pressure_hpa">%1$s гПа</string>
+    <string name="pressure_mmhg">%1$s мм рт. сл.</string>
+    <string name="pressure_rising">расце</string>
+    <string name="pressure_falling">падае</string>
+    <string name="pressure_steady">стабільна</string>
+    <string name="wind_ms">%1$s м/с</string>
+    <string name="weather_pressure">Ціск</string>
+    <string name="weather_wind">Вецер</string>
+    <string name="weather_clouds">Воблачнасць</string>
+    <string name="weather_precip">Ападкі</string>
+    <string name="weather_moon">Месяц</string>
+    <string name="precip_mm">%1$s мм</string>
+    <string name="percent">%1$s%%</string>
+    <string-array name="compass_points">
+        <item>Пн</item>
+        <item>ПнУ</item>
+        <item>У</item>
+        <item>ПдУ</item>
+        <item>Пд</item>
+        <item>ПдЗ</item>
+        <item>З</item>
+        <item>ПнЗ</item>
+    </string-array>
+    <string-array name="moon_phases">
+        <item>Маладзік</item>
+        <item>Малады месяц</item>
+        <item>Першая чвэрць</item>
+        <item>Месяц расце</item>
+        <item>Поўня</item>
+        <item>Месяц убывае</item>
+        <item>Апошняя чвэрць</item>
+        <item>Стары месяц</item>
+    </string-array>
 </resources>

@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Build
 import com.sdfish.app.data.TrackPoint
 import com.sdfish.app.data.TripPhoto
+import com.sdfish.app.data.TripWeather
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -93,6 +94,19 @@ class ScreenshotTour {
         db.tripPhotoDao().insert(TripPhoto(tripId = trip.id, path = file.absolutePath, addedAt = System.currentTimeMillis()))
     }
 
+    /** Fixed weather for the running trip, so the screenshot does not depend on the network. */
+    private fun addSampleWeather() = runBlocking {
+        val db = SdFishApp.from(InstrumentationRegistry.getInstrumentation().targetContext).database
+        val trip = db.tripDao().observeActive().first() ?: return@runBlocking
+        db.tripWeatherDao().upsert(
+            TripWeather(
+                tripId = trip.id, latitude = trip.latitude ?: 52.2, longitude = trip.longitude ?: 21.0, time = trip.startTime,
+                temperatureC = 6.4, pressureHpa = 1012.6, pressureChangeHpa = -1.8, windSpeedMs = 3.6, windDirectionDeg = 300.0,
+                cloudCoverPct = 70.0, precipitationMm = 0.0, weatherCode = 2, fetchedAt = System.currentTimeMillis(),
+            )
+        )
+    }
+
     /** Two plain pictures standing in for photos of the fish just saved. */
     private fun addSampleFishPhotos(): Long = runBlocking {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
@@ -154,10 +168,13 @@ class ScreenshotTour {
         // The emulator does not move, so add a short walk along the shore to show the route.
         addSampleRoute()
         addSamplePhoto()
+        addSampleWeather()
 
-        // Open the running trip, see its fish and route, end it.
+        // Open the running trip, see its weather, fish and route, end it.
         tap("active_trip")
         shot("10_trip_running", settleMs = 3000)
+        compose.onNodeWithTag("trip_weather").performScrollTo()
+        shot("10a_trip_weather")
         compose.onNodeWithTag("route_map").performScrollTo()
         shot("10b_trip_route", settleMs = 5000)
         compose.onNodeWithTag("trip_photos").performScrollTo()

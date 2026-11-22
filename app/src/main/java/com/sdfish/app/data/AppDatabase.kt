@@ -7,13 +7,14 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [CatchEntry::class, FishingTrip::class, TrackPoint::class, TripPhoto::class, CatchPhoto::class], version = 5, exportSchema = true)
+@Database(entities = [CatchEntry::class, FishingTrip::class, TrackPoint::class, TripPhoto::class, CatchPhoto::class, TripWeather::class], version = 6, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun catchDao(): CatchDao
     abstract fun tripDao(): TripDao
     abstract fun trackDao(): TrackDao
     abstract fun tripPhotoDao(): TripPhotoDao
     abstract fun catchPhotoDao(): CatchPhotoDao
+    abstract fun tripWeatherDao(): TripWeatherDao
 
     companion object {
         const val NAME = "sdfish.db"
@@ -69,9 +70,21 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /** Version 6 keeps the weather of each trip. */
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `trip_weather` (`tripId` INTEGER NOT NULL, `latitude` REAL NOT NULL, " +
+                        "`longitude` REAL NOT NULL, `time` INTEGER NOT NULL, `temperatureC` REAL, `pressureHpa` REAL, " +
+                        "`pressureChangeHpa` REAL, `windSpeedMs` REAL, `windDirectionDeg` REAL, `cloudCoverPct` REAL, " +
+                        "`precipitationMm` REAL, `weatherCode` INTEGER, `fetchedAt` INTEGER NOT NULL, PRIMARY KEY(`tripId`))"
+                )
+            }
+        }
+
         fun create(context: Context, name: String = NAME): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, name)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                 .build()
     }
 }
