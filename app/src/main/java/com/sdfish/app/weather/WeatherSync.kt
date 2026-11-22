@@ -65,8 +65,7 @@ object WeatherSync {
         val lon = trip.longitude ?: return null
         val start = trip.startTime
         val day = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply { timeZone = TimeZone.getTimeZone("UTC") }
-        val host = if (now - start < FORECAST_DAYS_BACK * DAY) "https://api.open-meteo.com/v1/forecast"
-        else "https://archive-api.open-meteo.com/v1/archive"
+        val host = endpointFor(start, now)
         val url = "$host?latitude=${"%.4f".format(Locale.US, lat)}&longitude=${"%.4f".format(Locale.US, lon)}" +
             "&hourly=temperature_2m,pressure_msl,wind_speed_10m,wind_direction_10m,cloud_cover,precipitation,weather_code" +
             "&wind_speed_unit=ms&timezone=GMT&timeformat=unixtime" +
@@ -82,7 +81,8 @@ object WeatherSync {
                 // A trip too recent for the archive, or too old for the forecast: try later.
                 val error = conn.errorStream?.bufferedReader()?.use { it.readText() }
                 Log.w(TAG, "HTTP ${conn.responseCode} for trip ${trip.id}: $error")
-                if (conn.responseCode >= 500) throw IOException("HTTP ${conn.responseCode}")
+                // Rate limited or the service is down: stop and try again next time.
+                if (conn.responseCode == 429 || conn.responseCode >= 500) throw IOException("HTTP ${conn.responseCode}")
                 return null
             }
             val json = JSONObject(conn.inputStream.bufferedReader().use { it.readText() })
@@ -92,7 +92,13 @@ object WeatherSync {
         }
     }
 
-    private fun parse(json: JSONObject, trip: FishingTrip, lat: Double, lon: Double, now: Long): TripWeather? {
+    /** Recent trips use the forecast service, which keeps about 3 months; older ones the archive. */
+    internal fun endpointFor(start: Long, now: Long): String =
+        if (now - start < FORECAST_DAYS_BACK * DAY) "https://api.open-meteo.com/v1/forecast"
+        else "https://archive-api.open-meteo.com/v1/archive"
+
+    /** Picks the hour the trip started from an Open-Meteo hourly answer. */
+    internal fun parse(json: JSONObject, trip: FishingTrip, lat: Double, lon: Double, now: Long): TripWeather? {
         val hourly = json.getJSONObject("hourly")
         val times = hourly.getJSONArray("time")
         val startSec = trip.startTime / 1000
