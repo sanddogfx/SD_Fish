@@ -1,0 +1,23 @@
+--------- beginning of main
+11-22 20:20:44.771  5318  5462 W WeatherSync: HTTP 429 for trip 1: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:21:04.078  5318  5461 W WeatherSync: HTTP 429 for trip 1: {"reason":"Daily API request limit exceeded. Please try again tomorrow.","error":true}
+11-22 20:21:32.736  5318  5737 W WeatherSync: HTTP 429 for trip 2: {"reason":"Daily API request limit exceeded. Please try again tomorrow.","error":true}
+11-22 20:21:36.586  5318  5461 W WeatherSync: HTTP 429 for trip 2: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:21:45.840  5318  5461 W WeatherSync: HTTP 429 for trip 11: {"reason":"Daily API request limit exceeded. Please try again tomorrow.","error":true}
+11-22 20:21:45.858  5318  5461 W WeatherSync: HTTP 429 for trip 2: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:21:46.031  5318  5462 W WeatherSync: HTTP 429 for trip 11: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:21:46.051  5318  5462 W WeatherSync: HTTP 429 for trip 2: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:21:46.461  5318  5737 W WeatherSync: HTTP 429 for trip 11: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:21:46.479  5318  5737 W WeatherSync: HTTP 429 for trip 2: {"reason":"Daily API request limit exceeded. Please try again tomorrow.","error":true}
+11-22 20:21:56.085  5318  5462 W WeatherSync: HTTP 429 for trip 11: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:21:56.109  5318  5462 W WeatherSync: HTTP 429 for trip 2: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:22:04.942  5318  5461 W WeatherSync: HTTP 429 for trip 11: {"reason":"Daily API request limit exceeded. Please try again tomorrow.","error":true}
+11-22 20:22:04.963  5318  5461 W WeatherSync: HTTP 429 for trip 2: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:22:11.622  5318  5461 W WeatherSync: HTTP 429 for trip 11: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:22:11.649  5318  5461 W WeatherSync: HTTP 429 for trip 2: {"reason":"Daily API request limit exceeded. Please try again tomorrow.","error":true}
+11-22 20:22:16.805  5318  5461 W WeatherSync: HTTP 429 for trip 11: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:22:16.826  5318  5461 W WeatherSync: HTTP 429 for trip 2: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+11-22 20:22:29.252  5318  5737 W WeatherSync: HTTP 429 for trip 1: {"error":true,"reason":"Daily API request limit exceeded. Please try again tomorrow."}
+runner curl default UA: 429
+runner curl Dalvik UA: 429
+runner curl app UA: 429
