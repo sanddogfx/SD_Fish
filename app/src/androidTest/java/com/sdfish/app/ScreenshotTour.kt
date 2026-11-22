@@ -174,6 +174,12 @@ class ScreenshotTour {
             SdFishApp.from(InstrumentationRegistry.getInstrumentation().targetContext).database
                 .tripDao().observeWithCounts().first().first { it.catchCount == 0 }.trip.id
         }
+        // A short quick flick does nothing; only a long swipe asks to delete.
+        compose.onNodeWithTag("swipe_trip_$pastTripId").performTouchInput {
+            swipeLeft(startX = right - 10f, endX = right - 10f - width * 0.2f, durationMillis = 80)
+        }
+        compose.waitForIdle()
+        compose.onNodeWithTag("confirm_delete").assertDoesNotExist()
         compose.onNodeWithTag("swipe_trip_$pastTripId").performTouchInput { swipeLeft() }
         shot("11a3_swipe_delete_trip")
         tap("cancel_delete")
