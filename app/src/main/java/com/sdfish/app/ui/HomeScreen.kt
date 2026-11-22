@@ -42,6 +42,9 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.ui.semantics.Role
 import androidx.compose.runtime.mutableStateOf
 import com.sdfish.app.AppLanguage
+import com.sdfish.app.AppTheme
+import com.sdfish.app.ui.theme.GradientFab
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -138,10 +141,15 @@ fun HomeScreen(
             })
         },
         bottomBar = {
+            val navColors = NavigationBarItemDefaults.colors(
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
             NavigationBar {
                 NavigationBarItem(
                     selected = tab == 0,
                     onClick = { tab = 0 },
+                    colors = navColors,
                     modifier = Modifier.testTag("tab_trips"),
                     icon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
                     label = { Text(stringResource(R.string.tab_trips)) },
@@ -149,6 +157,7 @@ fun HomeScreen(
                 NavigationBarItem(
                     selected = tab == 1,
                     onClick = { tab = 1 },
+                    colors = navColors,
                     modifier = Modifier.testTag("tab_catches"),
                     icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
                     label = { Text(stringResource(R.string.tab_catches)) },
@@ -156,6 +165,7 @@ fun HomeScreen(
                 NavigationBarItem(
                     selected = tab == 2,
                     onClick = { tab = 2 },
+                    colors = navColors,
                     modifier = Modifier.testTag("tab_map"),
                     icon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
                     label = { Text(stringResource(R.string.tab_map)) },
@@ -165,32 +175,32 @@ fun HomeScreen(
         floatingActionButton = {
             val active = activeTrip
             when {
-                active != null -> ExtendedFloatingActionButton(
+                active != null -> GradientFab(
+                    text = stringResource(R.string.add_fish),
+                    icon = Icons.Filled.Add,
                     onClick = { onAddFishToTrip(active.id) },
                     modifier = Modifier.testTag("add_fish"),
-                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                    text = { Text(stringResource(R.string.add_fish)) },
                 )
-                tab == 1 -> ExtendedFloatingActionButton(
+                tab == 1 -> GradientFab(
                     // Every fish belongs to a trip: ask which one, or start a new one.
+                    text = stringResource(R.string.add_catch),
+                    icon = Icons.Filled.Add,
                     onClick = { chooseTrip = true },
                     modifier = Modifier.testTag("add_catch"),
-                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                    text = { Text(stringResource(R.string.add_catch)) },
                 )
                 else -> Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     ExtendedFloatingActionButton(
                         onClick = onAddPastTrip,
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                         modifier = Modifier.testTag("add_past_trip"),
                         icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                         text = { Text(stringResource(R.string.add_trip)) },
                     )
-                    ExtendedFloatingActionButton(
+                    GradientFab(
+                        text = stringResource(R.string.start_fishing),
+                        icon = Icons.Filled.PlayArrow,
                         onClick = onStartTrip,
                         modifier = Modifier.testTag("start_trip"),
-                        icon = { Icon(Icons.Filled.PlayArrow, contentDescription = null) },
-                        text = { Text(stringResource(R.string.start_fishing)) },
                     )
                 }
             }
@@ -278,16 +288,46 @@ private fun ChooseTripDialog(
 
 private const val RECENT_TRIPS = 10
 
-/** App settings. For now only the language. */
+/** App settings: language and dark / light theme. */
 @Composable
 private fun SettingsDialog(onDismiss: () -> Unit) {
+    val context = LocalContext.current
     val selected = AppLanguage.selectedTag()
     val options = listOf("") + AppLanguage.supported
+    val selectedTheme = AppTheme.selected(context)
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.settings)) },
         text = {
-            Column {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                Text(stringResource(R.string.theme), style = MaterialTheme.typography.titleSmall)
+                AppTheme.Mode.entries.forEach { mode ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("theme_${mode.key}")
+                            .selectable(selected = mode == selectedTheme, role = Role.RadioButton) {
+                                onDismiss()
+                                // Changing the theme recreates the screen in the new colors.
+                                if (mode != selectedTheme) AppTheme.select(context, mode)
+                            }
+                            .padding(vertical = 8.dp),
+                    ) {
+                        RadioButton(selected = mode == selectedTheme, onClick = null)
+                        Spacer(Modifier.width(12.dp))
+                        Text(
+                            stringResource(
+                                when (mode) {
+                                    AppTheme.Mode.SYSTEM -> R.string.language_system
+                                    AppTheme.Mode.DARK -> R.string.theme_dark
+                                    AppTheme.Mode.LIGHT -> R.string.theme_light
+                                }
+                            )
+                        )
+                    }
+                }
+                Spacer(Modifier.height(12.dp))
                 Text(stringResource(R.string.language), style = MaterialTheme.typography.titleSmall)
                 options.forEach { tag ->
                     Row(

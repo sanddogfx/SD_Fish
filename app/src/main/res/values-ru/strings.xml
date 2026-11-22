@@ -92,4 +92,7 @@
     <string name="trip_photos">Фото (%1$d)</string>
     <string name="trip_total_weight">Общий вес: %1$s кг</string>
     <string name="add_trip">Добавить рыбалку</string>
+    <string name="theme">Тема</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_light">Светлая</string>
 </resources>

@@ -12,6 +12,7 @@ class SdFishApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AppTheme.apply(this)
         // OpenStreetMap tiles: identify the app and keep the tile cache in app storage,
         // so no storage permission is needed and viewed areas work offline later.
         val osm = Configuration.getInstance()

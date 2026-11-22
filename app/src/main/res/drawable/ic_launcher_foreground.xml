@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Dark fish swimming up, with a lime eye. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Fish body -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M28,54 C36,39 58,37 71,54 C58,71 36,69 28,54 Z" />
-    <!-- Tail -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M69,54 L83,42 L80,54 L83,66 Z" />
-    <!-- Eye -->
-    <path
-        android:fillColor="#00696B"
-        android:pathData="M35,51 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0 Z" />
+    <group
+        android:translateX="55.5"
+        android:translateY="55.5"
+        android:rotation="-20"
+        android:scaleX="0.78"
+        android:scaleY="0.78">
+        <path
+            android:fillColor="#161A15"
+            android:pathData="M-25,0 C-15,-14 10,-16 22,-3 L26,0 L22,3 C10,16 -15,14 -25,0 Z" />
+        <path
+            android:fillColor="#161A15"
+            android:pathData="M-17,-5 L-35,-12 L-30,0 L-35,12 L-17,5 Z" />
+        <path
+            android:fillColor="#D2E870"
+            android:pathData="M10,-3 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0 Z" />
+    </group>
 </vector>

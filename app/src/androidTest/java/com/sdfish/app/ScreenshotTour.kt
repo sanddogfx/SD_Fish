@@ -170,5 +170,19 @@ class ScreenshotTour {
         shot("17_belarusian", settleMs = 4000)
         tap("tab_catches")
         shot("18_catches_belarusian")
+
+        // Dark is the default; switch to the light theme and back to Russian.
+        tap("settings")
+        tap("language_ru")
+        compose.waitForIdle()
+        Thread.sleep(3000)
+        tap("settings")
+        shot("19_settings_theme")
+        tap("theme_light")
+        shot("20_light_catches", settleMs = 4000)
+        tap("tab_trips")
+        shot("21_light_trips")
+        tap("tab_map")
+        shot("22_light_map", settleMs = 5000)
     }
 }
