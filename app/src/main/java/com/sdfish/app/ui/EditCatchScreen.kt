@@ -83,23 +83,16 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
+fun EditCatchScreen(catchId: Long, newInTripId: Long, onDone: () -> Unit) {
     val context = LocalContext.current
-    val vm: EditCatchViewModel = viewModel(factory = EditCatchViewModel.factory(catchId))
+    val vm: EditCatchViewModel = viewModel(factory = EditCatchViewModel.factory(catchId, newInTripId))
     val s = vm.state
     val isNew = catchId == 0L
     var confirmDelete by remember { mutableStateOf(false) }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { result ->
-        if (result.values.any { it }) vm.fetchLocation() else vm.markLocationDenied()
-    }
-    val requestLocation = {
-        if (hasLocationPermission(context)) vm.fetchLocation() else permissionLauncher.launch(LOCATION_PERMISSIONS)
-    }
+    val requestLocation = rememberLocationRequest(onGranted = vm::fetchLocation, onDenied = vm::markLocationDenied)
     LaunchedEffect(Unit) {
-        if (isNew && !vm.locationRequested) {
+        if (vm.wantsAutoLocation && !vm.locationRequested) {
             vm.locationRequested = true
             requestLocation()
         }
@@ -209,6 +202,17 @@ fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
                 }
             }
 
+            // --- Method and trip ---
+            SectionTitle(stringResource(R.string.section_method))
+            s.tripStart?.let {
+                Text(
+                    stringResource(R.string.from_trip, Formats.dateTime(it)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            MethodPicker(selected = s.method, allowNone = true) { m -> vm.update { it.copy(method = m) } }
+
             // --- Place and time ---
             SectionTitle(stringResource(R.string.section_place))
             OutlinedButton(onClick = { pickDateTime(context, s.timestamp) { t -> vm.update { it.copy(timestamp = t) } } }) {
@@ -216,40 +220,15 @@ fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
                 Spacer(Modifier.width(8.dp))
                 Text(Formats.dateTime(s.timestamp))
             }
-            LocationPicker(vm, s)
-            when (s.locationStatus) {
-                LocationStatus.Locating -> {
-                    Text(stringResource(R.string.locating))
-                    LinearProgressIndicator(Modifier.fillMaxWidth())
-                }
-                LocationStatus.Failed -> ErrorText(stringResource(R.string.location_error))
-                LocationStatus.Denied -> ErrorText(stringResource(R.string.location_denied))
-                LocationStatus.Idle -> Unit
-            }
-            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    if (s.latitude != null && s.longitude != null) {
-                        Text(Formats.coords(s.latitude, s.longitude), style = MaterialTheme.typography.bodyMedium)
-                        s.accuracy?.let {
-                            Text(
-                                stringResource(R.string.location_accuracy, it.roundToInt()),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                    Text(
-                        stringResource(R.string.location_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                TextButton(onClick = requestLocation, enabled = s.locationStatus != LocationStatus.Locating) {
-                    Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(4.dp))
-                    Text(stringResource(R.string.refresh_location))
-                }
-            }
+            PlaceSection(
+                latitude = s.latitude,
+                longitude = s.longitude,
+                accuracy = s.accuracy,
+                status = s.locationStatus,
+                recenterToken = s.recenterToken,
+                onPick = vm::setPosition,
+                onRequestLocation = requestLocation,
+            )
 
             // --- Note ---
             OutlinedTextField(
@@ -277,79 +256,6 @@ fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
             },
         )
     }
-}
-
-@Composable
-private fun SectionTitle(text: String) {
-    Text(text, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
-}
-
-@Composable
-private fun ErrorText(text: String) {
-    Text(text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
-}
-
-/** Small map: shows the catch point; tap the map or drag the pin to move it. */
-@Composable
-private fun LocationPicker(vm: EditCatchViewModel, s: EditState) {
-    val mapView = rememberMapView()
-    val context = LocalContext.current
-    val marker = remember {
-        Marker(mapView).apply {
-            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-            icon = ContextCompat.getDrawable(context, R.drawable.ic_map_pin)
-            setInfoWindow(null)
-            isDraggable = true
-            setOnMarkerDragListener(object : Marker.OnMarkerDragListener {
-                override fun onMarkerDrag(marker: Marker) = Unit
-                override fun onMarkerDragStart(marker: Marker) = Unit
-                override fun onMarkerDragEnd(marker: Marker) {
-                    vm.setPosition(marker.position.latitude, marker.position.longitude)
-                }
-            })
-        }
-    }
-    val tapOverlay = remember {
-        MapEventsOverlay(object : MapEventsReceiver {
-            override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
-                vm.setPosition(p.latitude, p.longitude)
-                return true
-            }
-
-            override fun longPressHelper(p: GeoPoint): Boolean = false
-        })
-    }
-
-    LaunchedEffect(s.recenterToken) {
-        if (s.recenterToken > 0 && s.latitude != null && s.longitude != null) {
-            mapView.controller.setZoom(15.0)
-            mapView.controller.setCenter(GeoPoint(s.latitude, s.longitude))
-        }
-    }
-
-    AndroidView(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .clip(RoundedCornerShape(12.dp)),
-        factory = {
-            mapView.apply {
-                if (!overlays.contains(tapOverlay)) overlays.add(0, tapOverlay)
-                if (!overlays.contains(marker)) overlays.add(marker)
-            }
-        },
-        update = { map: MapView ->
-            val lat = s.latitude
-            val lon = s.longitude
-            if (lat != null && lon != null) {
-                marker.position = GeoPoint(lat, lon)
-                marker.isEnabled = true
-            } else {
-                marker.isEnabled = false
-            }
-            map.invalidate()
-        },
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -386,26 +292,4 @@ private fun SpeciesField(text: String, onChange: (String) -> Unit) {
             }
         }
     }
-}
-
-private fun pickDateTime(context: Context, initial: Long, onPicked: (Long) -> Unit) {
-    val cal = Calendar.getInstance().apply { timeInMillis = initial }
-    DatePickerDialog(
-        context,
-        { _, year, month, day ->
-            TimePickerDialog(
-                context,
-                { _, hour, minute ->
-                    cal.set(year, month, day, hour, minute, 0)
-                    onPicked(cal.timeInMillis)
-                },
-                cal.get(Calendar.HOUR_OF_DAY),
-                cal.get(Calendar.MINUTE),
-                true,
-            ).show()
-        },
-        cal.get(Calendar.YEAR),
-        cal.get(Calendar.MONTH),
-        cal.get(Calendar.DAY_OF_MONTH),
-    ).show()
 }

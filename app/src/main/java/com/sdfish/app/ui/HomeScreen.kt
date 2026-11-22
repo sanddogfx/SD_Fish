@@ -20,6 +20,16 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
+import androidx.compose.runtime.rememberCoroutineScope
+import com.sdfish.app.data.FishingMethods
+import com.sdfish.app.data.FishingTrip
+import com.sdfish.app.data.TripWithCount
+import kotlinx.coroutines.launch
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RadioButton
@@ -75,10 +85,22 @@ import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
+fun HomeScreen(
+    onAdd: () -> Unit,
+    onOpen: (Long) -> Unit,
+    onStartTrip: () -> Unit,
+    onOpenTrip: (Long) -> Unit,
+    onAddFishToTrip: (Long) -> Unit,
+) {
     val context = LocalContext.current
-    val catchesFlow = remember { SdFishApp.from(context).database.catchDao().observeAll() }
+    val db = remember { SdFishApp.from(context).database }
+    val catchesFlow = remember { db.catchDao().observeAll() }
     val catches by catchesFlow.collectAsStateWithLifecycle(initialValue = null)
+    val tripsFlow = remember { db.tripDao().observeWithCounts() }
+    val trips by tripsFlow.collectAsStateWithLifecycle(initialValue = null)
+    val activeFlow = remember { db.tripDao().observeActive() }
+    val activeTrip by activeFlow.collectAsStateWithLifecycle(initialValue = null)
+    val scope = rememberCoroutineScope()
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var showSettings by rememberSaveable { mutableStateOf(false) }
 
@@ -104,12 +126,20 @@ fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
                 NavigationBarItem(
                     selected = tab == 0,
                     onClick = { tab = 0 },
-                    icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
-                    label = { Text(stringResource(R.string.tab_catches)) },
+                    modifier = Modifier.testTag("tab_trips"),
+                    icon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
+                    label = { Text(stringResource(R.string.tab_trips)) },
                 )
                 NavigationBarItem(
                     selected = tab == 1,
                     onClick = { tab = 1 },
+                    modifier = Modifier.testTag("tab_catches"),
+                    icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
+                    label = { Text(stringResource(R.string.tab_catches)) },
+                )
+                NavigationBarItem(
+                    selected = tab == 2,
+                    onClick = { tab = 2 },
                     modifier = Modifier.testTag("tab_map"),
                     icon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
                     label = { Text(stringResource(R.string.tab_map)) },
@@ -117,21 +147,47 @@ fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
             }
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = onAdd,
-                modifier = Modifier.testTag("add_catch"),
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(stringResource(R.string.add_catch)) },
-            )
+            val active = activeTrip
+            when {
+                active != null -> ExtendedFloatingActionButton(
+                    onClick = { onAddFishToTrip(active.id) },
+                    modifier = Modifier.testTag("add_fish"),
+                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                    text = { Text(stringResource(R.string.add_fish)) },
+                )
+                tab == 1 -> ExtendedFloatingActionButton(
+                    onClick = onAdd,
+                    modifier = Modifier.testTag("add_catch"),
+                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                    text = { Text(stringResource(R.string.add_catch)) },
+                )
+                else -> ExtendedFloatingActionButton(
+                    onClick = onStartTrip,
+                    modifier = Modifier.testTag("start_trip"),
+                    icon = { Icon(Icons.Filled.PlayArrow, contentDescription = null) },
+                    text = { Text(stringResource(R.string.start_fishing)) },
+                )
+            }
         },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
             UpdateBanner()
+            activeTrip?.let { trip ->
+                ActiveTripCard(
+                    trip = trip,
+                    onOpen = { onOpenTrip(trip.id) },
+                    onFinish = {
+                        scope.launch { db.tripDao().upsert(trip.copy(endTime = System.currentTimeMillis())) }
+                    },
+                )
+            }
             Box(Modifier.weight(1f).fillMaxWidth()) {
                 val list = catches
+                val tripList = trips
                 when {
-                    list == null -> Unit
-                    tab == 0 -> CatchList(list, onOpen)
+                    list == null || tripList == null -> Unit
+                    tab == 0 -> TripList(tripList, onOpenTrip)
+                    tab == 1 -> CatchList(list, onOpen)
                     else -> CatchMap(list, onOpen)
                 }
             }
@@ -174,6 +230,79 @@ private fun SettingsDialog(onDismiss: () -> Unit) {
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.close)) } },
     )
+}
+
+@Composable
+private fun ActiveTripCard(trip: FishingTrip, onOpen: () -> Unit, onFinish: () -> Unit) {
+    Card(
+        onClick = onOpen,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .testTag("active_trip"),
+    ) {
+        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.active_trip), style = MaterialTheme.typography.titleMedium)
+                Text(FishingMethods.displayName(trip.method), style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    rememberElapsed(trip.startTime),
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.testTag("trip_timer"),
+                )
+            }
+            Button(onClick = onFinish, modifier = Modifier.testTag("finish_trip")) {
+                Icon(Icons.Filled.Done, contentDescription = null)
+                Spacer(Modifier.width(6.dp))
+                Text(stringResource(R.string.end_fishing))
+            }
+        }
+    }
+}
+
+@Composable
+private fun TripList(trips: List<TripWithCount>, onOpen: (Long) -> Unit) {
+    if (trips.isEmpty()) {
+        Box(Modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center) {
+            Text(
+                stringResource(R.string.trips_empty),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+            )
+        }
+        return
+    }
+    LazyColumn(
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(trips, key = { it.trip.id }) { item ->
+            TripCard(item, onClick = { onOpen(item.trip.id) })
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TripCard(item: TripWithCount, onClick: () -> Unit) {
+    val trip = item.trip
+    Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp)) {
+            Text(Formats.dateTime(trip.startTime), style = MaterialTheme.typography.titleMedium)
+            Text(
+                FishingMethods.displayName(trip.method),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            val duration = if (trip.isActive) stringResource(R.string.trip_in_progress)
+            else Formats.duration(trip.endTime!! - trip.startTime)
+            Text(
+                "$duration · " + stringResource(R.string.fish_count, item.catchCount),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
 }
 
 @Composable

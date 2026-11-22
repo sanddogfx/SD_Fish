@@ -19,8 +19,8 @@ import java.io.File
 
 /**
  * Walks through the main screens like a user would and saves a screenshot of each.
- * CI runs it on an emulator, so every build doubles as a "does the app start and
- * save a catch" check, and the screenshots are attached to the build.
+ * CI runs it on an emulator, so every build doubles as a "does the app start, run a
+ * fishing trip and save a fish" check, and the screenshots are attached to the build.
  */
 @RunWith(AndroidJUnit4::class)
 class ScreenshotTour {
@@ -50,37 +50,53 @@ class ScreenshotTour {
         }
     }
 
+    private fun tap(tag: String) = compose.onNodeWithTag(tag).performClick()
+
     @Test
     fun tour() {
-        shot("01_home")
+        shot("01_home_trips")
 
-        compose.onNodeWithTag("add_catch").performClick()
-        shot("02_new_catch", settleMs = 6000) // time for the GPS fix and map tiles
+        // Start a trip: place from GPS, method feeder.
+        tap("start_trip")
+        shot("02_trip_new", settleMs = 6000)
+        tap("method_feeder")
+        tap("trip_start")
+        shot("03_home_active_trip", settleMs = 3000)
 
+        // Add a fish during the trip: place and method come from the trip.
+        tap("add_fish")
+        shot("04_fish_in_trip", settleMs = 4000)
         compose.onNodeWithTag("species").performTextInput("Szczu")
-        shot("03_species_list")
-        compose.onNodeWithTag("species_option_pike").performClick()
-
+        shot("05_species_list")
+        tap("species_option_pike")
         compose.onNodeWithTag("weight").performTextInput("2,4")
         compose.onNodeWithTag("length").performTextInput("68")
         hideKeyboard()
-        shot("04_new_catch_filled")
-
+        shot("06_fish_filled")
         compose.onNodeWithTag("note").performScrollTo()
-        shot("05_new_catch_bottom", settleMs = 3000)
+        shot("07_fish_bottom", settleMs = 3000)
+        tap("save")
+        shot("08_home_after_fish")
 
-        compose.onNodeWithTag("save").performClick()
-        shot("06_list_with_catch")
+        tap("tab_catches")
+        shot("09_catch_list")
 
-        compose.onNodeWithTag("tab_map").performClick()
-        shot("07_map", settleMs = 6000)
+        // Open the running trip, see its fish, end it.
+        tap("active_trip")
+        shot("10_trip_running", settleMs = 3000)
+        compose.onNodeWithTag("trip_finish").performScrollTo().performClick()
+        tap("tab_trips")
+        shot("11_trip_list")
+
+        tap("tab_map")
+        shot("12_map", settleMs = 6000)
 
         // Switch the app to Russian in settings; the screen is recreated in the new language.
-        compose.onNodeWithTag("settings").performClick()
-        shot("08_settings")
-        compose.onNodeWithTag("language_ru").performClick()
-        shot("09_map_russian", settleMs = 4000)
-        compose.onNodeWithTag("add_catch").performClick()
-        shot("10_new_catch_russian", settleMs = 4000)
+        tap("settings")
+        shot("13_settings")
+        tap("language_ru")
+        shot("14_map_russian", settleMs = 4000)
+        tap("tab_trips")
+        shot("15_trips_russian")
     }
 }
