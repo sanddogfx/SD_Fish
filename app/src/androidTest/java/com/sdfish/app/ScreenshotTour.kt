@@ -3,6 +3,7 @@ package com.sdfish.app
 import android.Manifest
 import android.graphics.Bitmap
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -46,25 +47,25 @@ class ScreenshotTour {
     fun tour() {
         shot("01_home")
 
-        compose.onNodeWithText("Улов").performClick()
+        compose.onNodeWithTag("add_catch").performClick()
         shot("02_new_catch", settleMs = 6000) // time for the GPS fix and map tiles
 
-        compose.onNodeWithText("Вид рыбы").performTextInput("Щук")
+        compose.onNodeWithTag("species").performTextInput("Щук")
         shot("03_species_list")
-        compose.onNodeWithText("Щука (Szczupak)").performClick()
+        compose.onNodeWithText("Щука (Szczupak)", useUnmergedTree = true).performClick()
 
-        compose.onNodeWithText("Вес, кг").performTextInput("2,4")
-        compose.onNodeWithText("Длина, см").performTextInput("68")
+        compose.onNodeWithTag("weight").performTextInput("2,4")
+        compose.onNodeWithTag("length").performTextInput("68")
         Espresso.closeSoftKeyboard()
         shot("04_new_catch_filled")
 
-        compose.onNodeWithText("Заметка: приманка, глубина, погода…").performScrollTo()
+        compose.onNodeWithTag("note").performScrollTo()
         shot("05_new_catch_bottom", settleMs = 3000)
 
-        compose.onNodeWithText("Сохранить").performClick()
+        compose.onNodeWithTag("save").performClick()
         shot("06_list_with_catch")
 
-        compose.onNodeWithText("Карта").performClick()
+        compose.onNodeWithTag("tab_map").performClick()
         shot("07_map", settleMs = 6000)
     }
 }

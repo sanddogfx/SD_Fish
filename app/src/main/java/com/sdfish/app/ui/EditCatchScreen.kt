@@ -58,6 +58,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -136,6 +137,7 @@ fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
                 Button(
                     onClick = { vm.save(onDone) },
                     modifier = Modifier
+                        .testTag("save")
                         .fillMaxWidth()
                         .navigationBarsPadding()
                         .imePadding()
@@ -162,7 +164,7 @@ fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
                     label = { Text(stringResource(R.string.weight_label)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).testTag("weight"),
                 )
                 OutlinedTextField(
                     value = s.lengthText,
@@ -170,7 +172,7 @@ fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
                     label = { Text(stringResource(R.string.length_label)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).testTag("length"),
                 )
             }
 
@@ -254,7 +256,7 @@ fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
                 onValueChange = { v -> vm.update { it.copy(note = v) } },
                 label = { Text(stringResource(R.string.note_label)) },
                 minLines = 3,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().testTag("note"),
             )
         }
     }
@@ -365,7 +367,8 @@ private fun SpeciesField(text: String, onChange: (String) -> Unit) {
             singleLine = true,
             modifier = Modifier
                 .menuAnchor(MenuAnchorType.PrimaryEditable)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("species"),
         )
         ExposedDropdownMenu(expanded = showMenu, onDismissRequest = { expanded = false }) {
             options.forEach { species ->
