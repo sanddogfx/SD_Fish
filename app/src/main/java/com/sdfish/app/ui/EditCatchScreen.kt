@@ -58,6 +58,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -292,9 +293,11 @@ private fun ErrorText(text: String) {
 @Composable
 private fun LocationPicker(vm: EditCatchViewModel, s: EditState) {
     val mapView = rememberMapView()
+    val context = LocalContext.current
     val marker = remember {
         Marker(mapView).apply {
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            icon = ContextCompat.getDrawable(context, R.drawable.ic_map_pin)
             setInfoWindow(null)
             isDraggable = true
             setOnMarkerDragListener(object : Marker.OnMarkerDragListener {
@@ -373,9 +376,10 @@ private fun SpeciesField(text: String, onChange: (String) -> Unit) {
         ExposedDropdownMenu(expanded = showMenu, onDismissRequest = { expanded = false }) {
             options.forEach { species ->
                 DropdownMenuItem(
-                    text = { Text(species.displayName) },
+                    text = { Text(species.displayName()) },
+                    modifier = Modifier.testTag("species_option_${species.id}"),
                     onClick = {
-                        onChange(species.displayName)
+                        onChange(species.displayName())
                         expanded = false
                     },
                 )

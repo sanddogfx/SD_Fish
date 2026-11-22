@@ -4,11 +4,11 @@ import android.Manifest
 import android.graphics.Bitmap
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import androidx.test.espresso.Espresso
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
@@ -43,6 +43,13 @@ class ScreenshotTour {
         File(dir, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
+    private fun hideKeyboard() {
+        compose.runOnUiThread {
+            val window = compose.activity.window
+            WindowCompat.getInsetsController(window, window.decorView).hide(WindowInsetsCompat.Type.ime())
+        }
+    }
+
     @Test
     fun tour() {
         shot("01_home")
@@ -50,13 +57,13 @@ class ScreenshotTour {
         compose.onNodeWithTag("add_catch").performClick()
         shot("02_new_catch", settleMs = 6000) // time for the GPS fix and map tiles
 
-        compose.onNodeWithTag("species").performTextInput("Щук")
+        compose.onNodeWithTag("species").performTextInput("Szczu")
         shot("03_species_list")
-        compose.onNodeWithText("Щука (Szczupak)", useUnmergedTree = true).performClick()
+        compose.onNodeWithTag("species_option_pike").performClick()
 
         compose.onNodeWithTag("weight").performTextInput("2,4")
         compose.onNodeWithTag("length").performTextInput("68")
-        Espresso.closeSoftKeyboard()
+        hideKeyboard()
         shot("04_new_catch_filled")
 
         compose.onNodeWithTag("note").performScrollTo()
@@ -67,5 +74,13 @@ class ScreenshotTour {
 
         compose.onNodeWithTag("tab_map").performClick()
         shot("07_map", settleMs = 6000)
+
+        // Switch the app to Russian in settings; the screen is recreated in the new language.
+        compose.onNodeWithTag("settings").performClick()
+        shot("08_settings")
+        compose.onNodeWithTag("language_ru").performClick()
+        shot("09_map_russian", settleMs = 4000)
+        compose.onNodeWithTag("add_catch").performClick()
+        shot("10_new_catch_russian", settleMs = 4000)
     }
 }

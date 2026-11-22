@@ -19,6 +19,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.TextButton
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.runtime.mutableStateOf
+import com.sdfish.app.AppLanguage
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -40,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -70,6 +80,7 @@ fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
     val catchesFlow = remember { SdFishApp.from(context).database.catchDao().observeAll() }
     val catches by catchesFlow.collectAsStateWithLifecycle(initialValue = null)
     var tab by rememberSaveable { mutableIntStateOf(0) }
+    var showSettings by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -81,6 +92,10 @@ fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                }
+            }, actions = {
+                IconButton(onClick = { showSettings = true }, modifier = Modifier.testTag("settings")) {
+                    Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.settings))
                 }
             })
         },
@@ -122,6 +137,43 @@ fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
             }
         }
     }
+
+    if (showSettings) SettingsDialog(onDismiss = { showSettings = false })
+}
+
+/** App settings. For now only the language. */
+@Composable
+private fun SettingsDialog(onDismiss: () -> Unit) {
+    val selected = AppLanguage.selectedTag()
+    val options = listOf("") + AppLanguage.supported
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.settings)) },
+        text = {
+            Column {
+                Text(stringResource(R.string.language), style = MaterialTheme.typography.titleSmall)
+                options.forEach { tag ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("language_${tag.ifEmpty { "system" }}")
+                            .selectable(selected = tag == selected, role = Role.RadioButton) {
+                                onDismiss()
+                                // Changing the language recreates the screen in the new language.
+                                if (tag != selected) AppLanguage.select(tag)
+                            }
+                            .padding(vertical = 8.dp),
+                    ) {
+                        RadioButton(selected = tag == selected, onClick = null)
+                        Spacer(Modifier.width(12.dp))
+                        Text(if (tag.isEmpty()) stringResource(R.string.language_system) else AppLanguage.nativeName(tag))
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.close)) } },
+    )
 }
 
 @Composable
@@ -225,6 +277,7 @@ private fun CatchMap(catches: List<CatchEntry>, onOpen: (Long) -> Unit) {
                     Marker(map).apply {
                         position = GeoPoint(lat, lon)
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                        icon = ContextCompat.getDrawable(context, R.drawable.ic_map_pin)
                         title = labels[entry.id]
                         snippet = Formats.dateTime(entry.timestamp)
                         subDescription = tapAgain

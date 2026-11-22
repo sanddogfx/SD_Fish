@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="version_label">wersja %1$s</string>
+    <string name="tab_catches">Połowy</string>
+    <string name="tab_map">Mapa</string>
+    <string name="add_catch">Połów</string>
+    <string name="empty_list">Nie masz jeszcze żadnych połowów.\nNaciśnij „Połów”, aby zapisać pierwszy.</string>
+    <string name="no_coords">Brak lokalizacji</string>
+    <string name="tap_again_to_open">Naciśnij ponownie, aby otworzyć</string>
+
+    <string name="new_catch">Nowy połów</string>
+    <string name="edit_catch">Połów</string>
+    <string name="back">Wstecz</string>
+    <string name="delete">Usuń</string>
+    <string name="delete_confirm_title">Usunąć połów?</string>
+    <string name="delete_confirm_text">Wpis i zdjęcie zostaną trwale usunięte.</string>
+    <string name="cancel">Anuluj</string>
+    <string name="save">Zapisz</string>
+
+    <string name="section_place">Miejsce i czas</string>
+    <string name="section_fish">Ryba</string>
+    <string name="section_photo">Zdjęcie</string>
+    <string name="locating">Ustalam lokalizację…</string>
+    <string name="location_error">Nie udało się ustalić lokalizacji. Sprawdź, czy GPS jest włączony, albo zaznacz miejsce na mapie.</string>
+    <string name="location_denied">Brak dostępu do lokalizacji. Zaznacz miejsce na mapie.</string>
+    <string name="location_hint">Dotknij mapy lub przeciągnij znacznik, aby poprawić miejsce.</string>
+    <string name="location_accuracy">dokładność ±%1$d m</string>
+    <string name="refresh_location">Ustal ponownie</string>
+
+    <string name="species_label">Gatunek</string>
+    <string name="species_unknown">Gatunek nieokreślony</string>
+    <string name="weight_label">Waga, kg</string>
+    <string name="length_label">Długość, cm</string>
+    <string name="weight_kg">%1$s kg</string>
+    <string name="length_cm">%1$s cm</string>
+
+    <string name="take_photo">Aparat</string>
+    <string name="pick_photo">Galeria</string>
+    <string name="remove_photo">Usuń</string>
+    <string name="no_camera">Nie znaleziono aplikacji aparatu</string>
+
+    <string name="note_label">Notatka: przynęta, głębokość, pogoda…</string>
+
+    <string name="update_available">Dostępna nowa wersja 0.1.%1$d</string>
+    <string name="update_downloading">Pobieram…</string>
+    <string name="update_failed">Nie udało się pobrać. Sprawdź internet i spróbuj ponownie.</string>
+    <string name="update_later">Później</string>
+    <string name="update_now">Aktualizuj</string>
+    <string name="update_allow_install">Zezwól SD_Fish na instalowanie aplikacji, wróć i naciśnij „Aktualizuj” jeszcze raz</string>
+
+    <string name="settings">Ustawienia</string>
+    <string name="language">Język</string>
+    <string name="language_system">Jak w systemie</string>
+    <string name="close">Zamknij</string>
+</resources>
