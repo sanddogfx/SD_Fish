@@ -53,6 +53,7 @@ import com.sdfish.app.SdFishApp
 import com.sdfish.app.data.CatchEntry
 import com.sdfish.app.data.SpeciesCatalog
 import com.sdfish.app.hasLocationPermission
+import com.sdfish.app.update.UpdateBanner
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.infowindow.InfoWindow
@@ -94,12 +95,15 @@ fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
             )
         },
     ) { padding ->
-        Box(Modifier.padding(padding).fillMaxSize()) {
-            val list = catches
-            when {
-                list == null -> Unit
-                tab == 0 -> CatchList(list, onOpen)
-                else -> CatchMap(list, onOpen)
+        Column(Modifier.padding(padding).fillMaxSize()) {
+            UpdateBanner()
+            Box(Modifier.weight(1f).fillMaxWidth()) {
+                val list = catches
+                when {
+                    list == null -> Unit
+                    tab == 0 -> CatchList(list, onOpen)
+                    else -> CatchMap(list, onOpen)
+                }
             }
         }
     }
