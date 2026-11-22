@@ -152,48 +152,6 @@ fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            // --- Place and time ---
-            SectionTitle(stringResource(R.string.section_place))
-            OutlinedButton(onClick = { pickDateTime(context, s.timestamp) { t -> vm.update { it.copy(timestamp = t) } } }) {
-                Icon(Icons.Filled.DateRange, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text(Formats.dateTime(s.timestamp))
-            }
-            LocationPicker(vm, s)
-            when (s.locationStatus) {
-                LocationStatus.Locating -> {
-                    Text(stringResource(R.string.locating))
-                    LinearProgressIndicator(Modifier.fillMaxWidth())
-                }
-                LocationStatus.Failed -> ErrorText(stringResource(R.string.location_error))
-                LocationStatus.Denied -> ErrorText(stringResource(R.string.location_denied))
-                LocationStatus.Idle -> Unit
-            }
-            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    if (s.latitude != null && s.longitude != null) {
-                        Text(Formats.coords(s.latitude, s.longitude), style = MaterialTheme.typography.bodyMedium)
-                        s.accuracy?.let {
-                            Text(
-                                stringResource(R.string.location_accuracy, it.roundToInt()),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    }
-                    Text(
-                        stringResource(R.string.location_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                TextButton(onClick = requestLocation, enabled = s.locationStatus != LocationStatus.Locating) {
-                    Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Spacer(Modifier.width(4.dp))
-                    Text(stringResource(R.string.refresh_location))
-                }
-            }
-
             // --- Fish ---
             SectionTitle(stringResource(R.string.section_fish))
             SpeciesField(s.speciesText) { text -> vm.update { it.copy(speciesText = text) } }
@@ -245,6 +203,48 @@ fun EditCatchScreen(catchId: Long, onDone: () -> Unit) {
                 }) { Text(stringResource(R.string.pick_photo)) }
                 if (s.photoPath != null) {
                     TextButton(onClick = { vm.setPhoto(null) }) { Text(stringResource(R.string.remove_photo)) }
+                }
+            }
+
+            // --- Place and time ---
+            SectionTitle(stringResource(R.string.section_place))
+            OutlinedButton(onClick = { pickDateTime(context, s.timestamp) { t -> vm.update { it.copy(timestamp = t) } } }) {
+                Icon(Icons.Filled.DateRange, contentDescription = null)
+                Spacer(Modifier.width(8.dp))
+                Text(Formats.dateTime(s.timestamp))
+            }
+            LocationPicker(vm, s)
+            when (s.locationStatus) {
+                LocationStatus.Locating -> {
+                    Text(stringResource(R.string.locating))
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
+                }
+                LocationStatus.Failed -> ErrorText(stringResource(R.string.location_error))
+                LocationStatus.Denied -> ErrorText(stringResource(R.string.location_denied))
+                LocationStatus.Idle -> Unit
+            }
+            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    if (s.latitude != null && s.longitude != null) {
+                        Text(Formats.coords(s.latitude, s.longitude), style = MaterialTheme.typography.bodyMedium)
+                        s.accuracy?.let {
+                            Text(
+                                stringResource(R.string.location_accuracy, it.roundToInt()),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                    Text(
+                        stringResource(R.string.location_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                TextButton(onClick = requestLocation, enabled = s.locationStatus != LocationStatus.Locating) {
+                    Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(4.dp))
+                    Text(stringResource(R.string.refresh_location))
                 }
             }
 
@@ -325,7 +325,7 @@ private fun LocationPicker(vm: EditCatchViewModel, s: EditState) {
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
-            .height(240.dp)
+            .height(200.dp)
             .clip(RoundedCornerShape(12.dp)),
         factory = {
             mapView.apply {
