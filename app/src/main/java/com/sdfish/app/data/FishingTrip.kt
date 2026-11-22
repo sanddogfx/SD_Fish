@@ -22,4 +22,6 @@ data class FishingTrip(
 data class TripWithCount(
     @Embedded val trip: FishingTrip,
     val catchCount: Int,
+    /** Sum of the weights entered for the trip's fish; null when none has a weight. */
+    val totalWeightKg: Double?,
 )

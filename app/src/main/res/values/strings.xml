@@ -92,4 +92,5 @@
     <string name="route_channel">Route recording</string>
     <string name="change_place">Change place</string>
     <string name="trip_photos">Photos (%1$d)</string>
+    <string name="trip_total_weight">Total weight: %1$s kg</string>
 </resources>

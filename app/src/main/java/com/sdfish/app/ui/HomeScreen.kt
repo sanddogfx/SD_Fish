@@ -368,7 +368,11 @@ private fun TripCard(item: TripWithCount, onClick: () -> Unit) {
             val duration = if (trip.isActive) stringResource(R.string.trip_in_progress)
             else Formats.duration(trip.endTime!! - trip.startTime)
             Text(
-                "$duration · " + stringResource(R.string.fish_count, item.catchCount),
+                listOfNotNull(
+                    duration,
+                    stringResource(R.string.fish_count, item.catchCount),
+                    item.totalWeightKg?.let { stringResource(R.string.weight_kg, Formats.number(it)) },
+                ).joinToString(" · "),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }

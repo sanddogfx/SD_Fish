@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TripDao {
     @Query(
-        "SELECT trips.*, (SELECT COUNT(*) FROM catches WHERE catches.tripId = trips.id) AS catchCount " +
+        "SELECT trips.*, (SELECT COUNT(*) FROM catches WHERE catches.tripId = trips.id) AS catchCount, " +
+            "(SELECT SUM(weightKg) FROM catches WHERE catches.tripId = trips.id) AS totalWeightKg " +
             "FROM trips ORDER BY startTime DESC"
     )
     fun observeWithCounts(): Flow<List<TripWithCount>>

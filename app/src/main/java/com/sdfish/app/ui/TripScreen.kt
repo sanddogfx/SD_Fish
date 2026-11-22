@@ -211,6 +211,14 @@ fun TripScreen(
 
             if (!vm.isNew) {
                 SectionTitle(stringResource(R.string.trip_catches, catches.size))
+                val totalWeight = catches.mapNotNull { it.weightKg }.takeIf { it.isNotEmpty() }?.sum()
+                if (totalWeight != null) {
+                    Text(
+                        stringResource(R.string.trip_total_weight, Formats.number(totalWeight)),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.testTag("trip_total_weight"),
+                    )
+                }
                 if (catches.isEmpty()) {
                     Text(
                         stringResource(R.string.trip_no_catches),
