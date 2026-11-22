@@ -85,6 +85,23 @@ class ScreenshotTour {
         db.tripPhotoDao().insert(TripPhoto(tripId = trip.id, path = file.absolutePath, addedAt = System.currentTimeMillis()))
     }
 
+    /** Two plain pictures standing in for photos of the fish just saved. */
+    private fun addSampleFishPhotos(): Long = runBlocking {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val db = SdFishApp.from(context).database
+        val fish = db.catchDao().observeAll().first().first()
+        val paths = listOf(android.graphics.Color.rgb(90, 140, 90), android.graphics.Color.rgb(200, 170, 60)).map { color ->
+            val bitmap = Bitmap.createBitmap(600, 600, Bitmap.Config.ARGB_8888)
+            android.graphics.Canvas(bitmap).drawColor(color)
+            val file = PhotoStorage.newPhotoFile(context, "catch")
+            file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
+            file.absolutePath
+        }
+        db.catchDao().upsert(fish.copy(photoPath = paths.first()))
+        db.catchPhotoDao().replace(fish.id, paths)
+        fish.id
+    }
+
     private fun tap(tag: String) = compose.onNodeWithTag(tag).performClick()
 
     @Test
@@ -116,7 +133,13 @@ class ScreenshotTour {
         shot("08_home_after_fish")
 
         tap("tab_catches")
+        val fishId = addSampleFishPhotos()
         shot("09_catch_list")
+        // Opening the fish shows all its photos.
+        tap("catch_thumb_$fishId")
+        compose.onNodeWithTag("catch_photos").performScrollTo()
+        shot("09b_fish_photos", settleMs = 3000)
+        compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
 
         // The emulator does not move, so add a short walk along the shore to show the route.
         addSampleRoute()

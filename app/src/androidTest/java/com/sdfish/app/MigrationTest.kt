@@ -30,7 +30,7 @@ class MigrationTest {
             )
             db.execSQL(
                 "INSERT INTO catches (timestamp, latitude, longitude, accuracyMeters, species, weightKg, lengthCm, photoPath, note) " +
-                    "VALUES (1700000000000, 52.2, 21.0, 5.0, 'pike', 2.4, 68.0, NULL, 'old catch')"
+                    "VALUES (1700000000000, 52.2, 21.0, 5.0, 'pike', 2.4, 68.0, '/old/pike.jpg', 'old catch')"
             )
             db.version = 1
         }
@@ -45,6 +45,8 @@ class MigrationTest {
             assertEquals(0, runBlocking { room.tripDao().observeWithCounts().first() }.size)
             assertEquals(0, runBlocking { room.trackDao().observeByTrip(1).first() }.size)
             assertEquals(0, runBlocking { room.tripPhotoDao().byTrip(1) }.size)
+            // The old single photo became the first of the fish's photos.
+            assertEquals(listOf("/old/pike.jpg"), runBlocking { room.catchPhotoDao().pathsFor(catches[0].id) })
         } finally {
             room.close()
             context.deleteDatabase(name)

@@ -44,6 +44,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.background
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.sdfish.app.Formats
@@ -298,4 +300,24 @@ fun pickDateTime(context: Context, initial: Long, onPicked: (Long) -> Unit) {
         cal.get(Calendar.MONTH),
         cal.get(Calendar.DAY_OF_MONTH),
     ).show()
+}
+
+/** The fish's first photo, or a fish sign when it has none. */
+@Composable
+fun CatchThumbnail(entry: com.sdfish.app.data.CatchEntry, size: androidx.compose.ui.unit.Dp) {
+    val thumb = Modifier.size(size).clip(RoundedCornerShape(8.dp))
+    val path = entry.photoPath
+    if (path != null) {
+        coil.compose.AsyncImage(
+            model = java.io.File(path),
+            contentDescription = null,
+            contentScale = androidx.compose.ui.layout.ContentScale.Crop,
+            modifier = thumb.testTag("catch_thumb_${entry.id}"),
+        )
+    } else {
+        androidx.compose.foundation.layout.Box(
+            thumb.background(MaterialTheme.colorScheme.secondaryContainer),
+            contentAlignment = Alignment.Center,
+        ) { Text("🐟", fontSize = (size.value * 0.44f).sp) }
+    }
 }

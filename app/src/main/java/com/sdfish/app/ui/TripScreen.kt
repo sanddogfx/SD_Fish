@@ -201,11 +201,14 @@ fun TripScreen(
             if (!vm.isNew) {
                 RouteSection(points = route, catches = catches, active = s.endTime == null)
 
-                TripPhotosSection(
-                    photos = photos,
+                PhotosEditor(
+                    title = stringResource(R.string.trip_photos, photos.size),
+                    paths = photos.map { it.path },
+                    filePrefix = "trip",
+                    testTag = "trip_photos",
                     onTaken = vm::addPhoto,
                     onPicked = vm::importPhotos,
-                    onDelete = vm::deletePhoto,
+                    onDelete = { path -> photos.firstOrNull { it.path == path }?.let(vm::deletePhoto) },
                 )
             }
 
@@ -285,6 +288,8 @@ private fun TripCatchRow(entry: CatchEntry, onClick: () -> Unit) {
             .padding(vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        CatchThumbnail(entry, size = 48.dp)
+        Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(speciesLabel(entry), style = MaterialTheme.typography.bodyLarge)
             val details = listOfNotNull(

@@ -188,7 +188,7 @@ fun HomeScreen(
                     onClick = { chooseTrip = true },
                     modifier = Modifier.testTag("add_catch"),
                 )
-                else -> Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                else -> Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     ExtendedFloatingActionButton(
                         onClick = onAddPastTrip,
                         containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -462,20 +462,7 @@ private fun CatchList(catches: List<CatchEntry>, onOpen: (Long) -> Unit) {
 private fun CatchCard(entry: CatchEntry, onClick: () -> Unit) {
     Card(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            val thumb = Modifier.size(64.dp).clip(RoundedCornerShape(8.dp))
-            if (entry.photoPath != null) {
-                AsyncImage(
-                    model = File(entry.photoPath),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = thumb,
-                )
-            } else {
-                Box(
-                    thumb.background(MaterialTheme.colorScheme.secondaryContainer),
-                    contentAlignment = Alignment.Center,
-                ) { Text("🐟", fontSize = 28.sp) }
-            }
+            CatchThumbnail(entry, size = 64.dp)
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(speciesLabel(entry), style = MaterialTheme.typography.titleMedium)
