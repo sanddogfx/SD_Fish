@@ -1,5 +1,7 @@
 package com.sdfish.app
 
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -13,11 +15,9 @@ object Formats {
 
     fun coords(lat: Double, lon: Double): String = String.format(Locale.US, "%.5f, %.5f", lat, lon)
 
-    fun number(value: Double?): String = when {
-        value == null -> ""
-        value % 1.0 == 0.0 -> value.toLong().toString()
-        else -> value.toString()
-    }
+    /** 2.4 -> "2,4" in Russian or Polish, "2.4" in English; whole numbers without decimals. */
+    fun number(value: Double?): String =
+        if (value == null) "" else DecimalFormat("0.##", DecimalFormatSymbols.getInstance()).format(value)
 
     fun parseNumber(text: String): Double? = text.trim().replace(',', '.').toDoubleOrNull()
 }

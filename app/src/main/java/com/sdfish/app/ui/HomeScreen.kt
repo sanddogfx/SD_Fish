@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -225,6 +226,7 @@ private fun CatchMap(catches: List<CatchEntry>, onOpen: (Long) -> Unit) {
                     Marker(map).apply {
                         position = GeoPoint(lat, lon)
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                        icon = ContextCompat.getDrawable(context, R.drawable.ic_map_pin)
                         title = labels[entry.id]
                         snippet = Formats.dateTime(entry.timestamp)
                         subDescription = tapAgain
