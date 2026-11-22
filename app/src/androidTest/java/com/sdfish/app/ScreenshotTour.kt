@@ -7,7 +7,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import androidx.test.espresso.Espresso
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
@@ -42,6 +43,13 @@ class ScreenshotTour {
         File(dir, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 
+    private fun hideKeyboard() {
+        compose.runOnUiThread {
+            val window = compose.activity.window
+            WindowCompat.getInsetsController(window, window.decorView).hide(WindowInsetsCompat.Type.ime())
+        }
+    }
+
     @Test
     fun tour() {
         shot("01_home")
@@ -55,7 +63,7 @@ class ScreenshotTour {
 
         compose.onNodeWithTag("weight").performTextInput("2,4")
         compose.onNodeWithTag("length").performTextInput("68")
-        Espresso.closeSoftKeyboard()
+        hideKeyboard()
         shot("04_new_catch_filled")
 
         compose.onNodeWithTag("note").performScrollTo()
