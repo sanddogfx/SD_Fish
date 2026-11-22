@@ -103,4 +103,11 @@ jobs:
           cd "$dir"
           git add -A
           git commit -qm "Screenshots for build ${{ github.run_number }}" || exit 0
-          git push origin HEAD:refs/heads/ci-screenshots
+          # Another build may have pushed in the meantime: put this build's folder on top and retry.
+          for attempt in 1 2 3 4 5; do
+            git push origin HEAD:refs/heads/ci-screenshots && exit 0
+            sleep $((attempt * 5))
+            git fetch --depth=1 origin +refs/heads/ci-screenshots:refs/remotes/origin/ci-screenshots
+            git rebase -q origin/ci-screenshots || { git rebase --abort; exit 1; }
+          done
+          exit 1
