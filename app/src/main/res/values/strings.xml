@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SD_Fish</string>
+
+    <string name="tab_catches">Уловы</string>
+    <string name="tab_map">Карта</string>
+    <string name="add_catch">Улов</string>
+    <string name="empty_list">Пока нет ни одного улова.\nНажми «Улов», чтобы записать первый.</string>
+    <string name="no_coords">Без координат</string>
+    <string name="tap_again_to_open">Нажми ещё раз, чтобы открыть</string>
+
+    <string name="new_catch">Новый улов</string>
+    <string name="edit_catch">Улов</string>
+    <string name="back">Назад</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_confirm_title">Удалить улов?</string>
+    <string name="delete_confirm_text">Запись и фото будут удалены без возможности восстановления.</string>
+    <string name="cancel">Отмена</string>
+    <string name="save">Сохранить</string>
+
+    <string name="section_place">Место и время</string>
+    <string name="section_fish">Рыба</string>
+    <string name="section_photo">Фото</string>
+    <string name="locating">Определяю место…</string>
+    <string name="location_error">Не удалось определить место. Проверь, что GPS включён, или отметь точку на карте.</string>
+    <string name="location_denied">Нет доступа к геолокации. Отметь точку на карте вручную.</string>
+    <string name="location_hint">Нажми на карту или перетащи метку, чтобы поправить место.</string>
+    <string name="location_accuracy">точность ±%1$d м</string>
+    <string name="refresh_location">Определить заново</string>
+
+    <string name="species_label">Вид рыбы</string>
+    <string name="species_unknown">Вид не указан</string>
+    <string name="weight_label">Вес, кг</string>
+    <string name="length_label">Длина, см</string>
+    <string name="weight_kg">%1$s кг</string>
+    <string name="length_cm">%1$s см</string>
+
+    <string name="take_photo">Камера</string>
+    <string name="pick_photo">Галерея</string>
+    <string name="remove_photo">Убрать</string>
+    <string name="no_camera">Не найдено приложение камеры</string>
+
+    <string name="note_label">Заметка: приманка, глубина, погода…</string>
+</resources>
