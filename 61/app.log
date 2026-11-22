@@ -1,0 +1,134 @@
+--------- beginning of main
+11-22 20:13:35.824  5625  5677 W WeatherSync: HTTP 403 for trip 1: <html>
+11-22 20:13:35.824  5625  5677 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:13:35.824  5625  5677 W WeatherSync: <body>
+11-22 20:13:35.824  5625  5677 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:13:35.824  5625  5677 W WeatherSync: <hr><center>nginx</center>
+11-22 20:13:35.824  5625  5677 W WeatherSync: </body>
+11-22 20:13:35.824  5625  5677 W WeatherSync: </html>
+11-22 20:13:56.523  5625  5678 W WeatherSync: HTTP 403 for trip 1: <html>
+11-22 20:13:56.523  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:13:56.523  5625  5678 W WeatherSync: <body>
+11-22 20:13:56.523  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:13:56.523  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:13:56.523  5625  5678 W WeatherSync: </body>
+11-22 20:13:56.523  5625  5678 W WeatherSync: </html>
+11-22 20:14:26.999  5625  5677 W WeatherSync: HTTP 403 for trip 2: <html>
+11-22 20:14:26.999  5625  5677 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:26.999  5625  5677 W WeatherSync: <body>
+11-22 20:14:26.999  5625  5677 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:26.999  5625  5677 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:26.999  5625  5677 W WeatherSync: </body>
+11-22 20:14:26.999  5625  5677 W WeatherSync: </html>
+11-22 20:14:31.227  5625  5678 W WeatherSync: HTTP 403 for trip 2: <html>
+11-22 20:14:31.227  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:31.227  5625  5678 W WeatherSync: <body>
+11-22 20:14:31.227  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:31.227  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:31.227  5625  5678 W WeatherSync: </body>
+11-22 20:14:31.227  5625  5678 W WeatherSync: </html>
+11-22 20:14:40.951  5625  5678 W WeatherSync: HTTP 403 for trip 11: <html>
+11-22 20:14:40.951  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:40.951  5625  5678 W WeatherSync: <body>
+11-22 20:14:40.951  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:40.951  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:40.951  5625  5678 W WeatherSync: </body>
+11-22 20:14:40.951  5625  5678 W WeatherSync: </html>
+11-22 20:14:40.972  5625  5678 W WeatherSync: HTTP 403 for trip 2: <html>
+11-22 20:14:40.972  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:40.972  5625  5678 W WeatherSync: <body>
+11-22 20:14:40.972  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:40.972  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:40.972  5625  5678 W WeatherSync: </body>
+11-22 20:14:40.972  5625  5678 W WeatherSync: </html>
+11-22 20:14:41.215  5625  5676 W WeatherSync: HTTP 403 for trip 11: <html>
+11-22 20:14:41.215  5625  5676 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:41.215  5625  5676 W WeatherSync: <body>
+11-22 20:14:41.215  5625  5676 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:41.215  5625  5676 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:41.215  5625  5676 W WeatherSync: </body>
+11-22 20:14:41.215  5625  5676 W WeatherSync: </html>
+11-22 20:14:41.253  5625  5676 W WeatherSync: HTTP 403 for trip 2: <html>
+11-22 20:14:41.253  5625  5676 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:41.253  5625  5676 W WeatherSync: <body>
+11-22 20:14:41.253  5625  5676 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:41.253  5625  5676 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:41.253  5625  5676 W WeatherSync: </body>
+11-22 20:14:41.253  5625  5676 W WeatherSync: </html>
+11-22 20:14:41.713  5625  5678 W WeatherSync: HTTP 403 for trip 11: <html>
+11-22 20:14:41.713  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:41.713  5625  5678 W WeatherSync: <body>
+11-22 20:14:41.713  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:41.713  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:41.713  5625  5678 W WeatherSync: </body>
+11-22 20:14:41.713  5625  5678 W WeatherSync: </html>
+11-22 20:14:41.738  5625  5678 W WeatherSync: HTTP 403 for trip 2: <html>
+11-22 20:14:41.738  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:41.738  5625  5678 W WeatherSync: <body>
+11-22 20:14:41.738  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:41.738  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:41.738  5625  5678 W WeatherSync: </body>
+11-22 20:14:41.738  5625  5678 W WeatherSync: </html>
+11-22 20:14:52.255  5625  5678 W WeatherSync: HTTP 403 for trip 11: <html>
+11-22 20:14:52.255  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:52.255  5625  5678 W WeatherSync: <body>
+11-22 20:14:52.255  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:52.255  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:52.255  5625  5678 W WeatherSync: </body>
+11-22 20:14:52.255  5625  5678 W WeatherSync: </html>
+11-22 20:14:52.284  5625  5678 W WeatherSync: HTTP 403 for trip 2: <html>
+11-22 20:14:52.284  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:14:52.284  5625  5678 W WeatherSync: <body>
+11-22 20:14:52.284  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:14:52.284  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:14:52.284  5625  5678 W WeatherSync: </body>
+11-22 20:14:52.284  5625  5678 W WeatherSync: </html>
+11-22 20:15:01.706  5625  5678 W WeatherSync: HTTP 403 for trip 11: <html>
+11-22 20:15:01.706  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:15:01.706  5625  5678 W WeatherSync: <body>
+11-22 20:15:01.706  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:15:01.706  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:15:01.706  5625  5678 W WeatherSync: </body>
+11-22 20:15:01.706  5625  5678 W WeatherSync: </html>
+11-22 20:15:01.734  5625  5678 W WeatherSync: HTTP 403 for trip 2: <html>
+11-22 20:15:01.734  5625  5678 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:15:01.734  5625  5678 W WeatherSync: <body>
+11-22 20:15:01.734  5625  5678 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:15:01.734  5625  5678 W WeatherSync: <hr><center>nginx</center>
+11-22 20:15:01.734  5625  5678 W WeatherSync: </body>
+11-22 20:15:01.734  5625  5678 W WeatherSync: </html>
+11-22 20:15:08.651  5625  5676 W WeatherSync: HTTP 403 for trip 11: <html>
+11-22 20:15:08.651  5625  5676 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:15:08.651  5625  5676 W WeatherSync: <body>
+11-22 20:15:08.651  5625  5676 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:15:08.651  5625  5676 W WeatherSync: <hr><center>nginx</center>
+11-22 20:15:08.651  5625  5676 W WeatherSync: </body>
+11-22 20:15:08.651  5625  5676 W WeatherSync: </html>
+11-22 20:15:08.681  5625  5676 W WeatherSync: HTTP 403 for trip 2: <html>
+11-22 20:15:08.681  5625  5676 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:15:08.681  5625  5676 W WeatherSync: <body>
+11-22 20:15:08.681  5625  5676 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:15:08.681  5625  5676 W WeatherSync: <hr><center>nginx</center>
+11-22 20:15:08.681  5625  5676 W WeatherSync: </body>
+11-22 20:15:08.681  5625  5676 W WeatherSync: </html>
+11-22 20:15:13.971  5625  5676 W WeatherSync: HTTP 403 for trip 11: <html>
+11-22 20:15:13.971  5625  5676 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:15:13.971  5625  5676 W WeatherSync: <body>
+11-22 20:15:13.971  5625  5676 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:15:13.971  5625  5676 W WeatherSync: <hr><center>nginx</center>
+11-22 20:15:13.971  5625  5676 W WeatherSync: </body>
+11-22 20:15:13.971  5625  5676 W WeatherSync: </html>
+11-22 20:15:13.997  5625  5676 W WeatherSync: HTTP 403 for trip 2: <html>
+11-22 20:15:13.997  5625  5676 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:15:13.997  5625  5676 W WeatherSync: <body>
+11-22 20:15:13.997  5625  5676 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:15:13.997  5625  5676 W WeatherSync: <hr><center>nginx</center>
+11-22 20:15:13.997  5625  5676 W WeatherSync: </body>
+11-22 20:15:13.997  5625  5676 W WeatherSync: </html>
+11-22 20:15:27.031  5625  6509 W WeatherSync: HTTP 403 for trip 1: <html>
+11-22 20:15:27.031  5625  6509 W WeatherSync: <head><title>403 Forbidden</title></head>
+11-22 20:15:27.031  5625  6509 W WeatherSync: <body>
+11-22 20:15:27.031  5625  6509 W WeatherSync: <center><h1>403 Forbidden</h1></center>
+11-22 20:15:27.031  5625  6509 W WeatherSync: <hr><center>nginx</center>
+11-22 20:15:27.031  5625  6509 W WeatherSync: </body>
+11-22 20:15:27.031  5625  6509 W WeatherSync: </html>

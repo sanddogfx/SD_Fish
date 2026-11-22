@@ -1,0 +1,43 @@
+
+com.sdfish.app.MigrationTest:.
+com.sdfish.app.ScreenshotTour:.
+com.sdfish.app.WeatherSyncTest:
+Error in recentAndOldTripsGetWeather(com.sdfish.app.WeatherSyncTest):
+java.lang.AssertionError: recent trip weather
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertNotNull(Assert.java:713)
+	at com.sdfish.app.WeatherSyncTest$recentAndOldTripsGetWeather$1.invokeSuspend(WeatherSyncTest.kt:34)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source:1)
+	at com.sdfish.app.WeatherSyncTest.recentAndOldTripsGetWeather(WeatherSyncTest.kt:17)
+
+
+Time: 129.325
+There was 1 failure:
+1) recentAndOldTripsGetWeather(com.sdfish.app.WeatherSyncTest)
+java.lang.AssertionError: recent trip weather
+	at org.junit.Assert.fail(Assert.java:89)
+	at org.junit.Assert.assertTrue(Assert.java:42)
+	at org.junit.Assert.assertNotNull(Assert.java:713)
+	at com.sdfish.app.WeatherSyncTest$recentAndOldTripsGetWeather$1.invokeSuspend(WeatherSyncTest.kt:34)
+	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:34)
+	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:100)
+	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:263)
+	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:94)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:70)
+	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source:1)
+	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:48)
+	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source:1)
+	at com.sdfish.app.WeatherSyncTest.recentAndOldTripsGetWeather(WeatherSyncTest.kt:17)
+
+FAILURES!!!
+Tests run: 3,  Failures: 1
+
+
