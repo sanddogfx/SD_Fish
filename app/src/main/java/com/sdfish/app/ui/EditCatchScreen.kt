@@ -376,9 +376,10 @@ private fun SpeciesField(text: String, onChange: (String) -> Unit) {
         ExposedDropdownMenu(expanded = showMenu, onDismissRequest = { expanded = false }) {
             options.forEach { species ->
                 DropdownMenuItem(
-                    text = { Text(species.displayName) },
+                    text = { Text(species.displayName()) },
+                    modifier = Modifier.testTag("species_option_${species.id}"),
                     onClick = {
-                        onChange(species.displayName)
+                        onChange(species.displayName())
                         expanded = false
                     },
                 )

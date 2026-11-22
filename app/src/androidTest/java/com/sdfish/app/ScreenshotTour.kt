@@ -4,7 +4,6 @@ import android.Manifest
 import android.graphics.Bitmap
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
@@ -50,9 +49,9 @@ class ScreenshotTour {
         compose.onNodeWithTag("add_catch").performClick()
         shot("02_new_catch", settleMs = 6000) // time for the GPS fix and map tiles
 
-        compose.onNodeWithTag("species").performTextInput("Щук")
+        compose.onNodeWithTag("species").performTextInput("Szczu")
         shot("03_species_list")
-        compose.onNodeWithText("Щука (Szczupak)", useUnmergedTree = true).performClick()
+        compose.onNodeWithTag("species_option_pike").performClick()
 
         compose.onNodeWithTag("weight").performTextInput("2,4")
         compose.onNodeWithTag("length").performTextInput("68")
@@ -67,5 +66,13 @@ class ScreenshotTour {
 
         compose.onNodeWithTag("tab_map").performClick()
         shot("07_map", settleMs = 6000)
+
+        // Switch the app to Russian in settings; the screen is recreated in the new language.
+        compose.onNodeWithTag("settings").performClick()
+        shot("08_settings")
+        compose.onNodeWithTag("language_ru").performClick()
+        shot("09_map_russian", settleMs = 4000)
+        compose.onNodeWithTag("add_catch").performClick()
+        shot("10_new_catch_russian", settleMs = 4000)
     }
 }
