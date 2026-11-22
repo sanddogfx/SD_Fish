@@ -34,6 +34,10 @@ data class EditState(
     val tripId: Long? = null,
     /** Start time of the trip this fish belongs to, for display. */
     val tripStart: Long? = null,
+    /** End time of that trip; null while the trip is still running. */
+    val tripEnd: Long? = null,
+    /** Set when Save was refused because the time is outside the trip: the allowed span. */
+    val timeOutOfTrip: Pair<Long, Long>? = null,
     val locationStatus: LocationStatus = LocationStatus.Idle,
     /** Changes whenever the map should jump to the current point. */
     val recenterToken: Int = 0,
@@ -64,11 +68,14 @@ class EditCatchViewModel(
             viewModelScope.launch {
                 tripDao.getById(newInTripId)?.let { t ->
                     state = state.copy(
+                        // A fish added later to a finished trip gets a time inside that trip.
+                        timestamp = state.timestamp.coerceIn(t.startTime, maxOf(t.startTime, t.endTime ?: Long.MAX_VALUE)),
                         latitude = t.latitude,
                         longitude = t.longitude,
                         method = t.method,
                         tripId = t.id,
                         tripStart = t.startTime,
+                        tripEnd = t.endTime,
                         recenterToken = state.recenterToken + 1,
                     )
                 }
@@ -78,6 +85,7 @@ class EditCatchViewModel(
             viewModelScope.launch {
                 dao.getById(catchId)?.let { e ->
                     originalPhotoPath = e.photoPath
+                    val trip = e.tripId?.let { id -> tripDao.getById(id) }
                     state = EditState(
                         timestamp = e.timestamp,
                         latitude = e.latitude,
@@ -90,7 +98,8 @@ class EditCatchViewModel(
                         note = e.note,
                         method = e.method,
                         tripId = e.tripId,
-                        tripStart = e.tripId?.let { id -> tripDao.getById(id)?.startTime },
+                        tripStart = trip?.startTime,
+                        tripEnd = trip?.endTime,
                         recenterToken = 1,
                     )
                 }
@@ -100,6 +109,16 @@ class EditCatchViewModel(
 
     fun update(transform: (EditState) -> EditState) {
         state = transform(state)
+    }
+
+    fun setTime(time: Long) {
+        state = state.copy(timestamp = time, timeOutOfTrip = null)
+    }
+
+    /** The time span a fish of this trip may have, or null when it is not in a trip. */
+    private fun allowedSpan(): Pair<Long, Long>? {
+        val start = state.tripStart ?: return null
+        return start to (state.tripEnd ?: System.currentTimeMillis())
     }
 
     fun setPosition(lat: Double, lon: Double) {
@@ -159,6 +178,12 @@ class EditCatchViewModel(
     )
 
     fun save(onSaved: () -> Unit) {
+        val span = allowedSpan()
+        // Times are picked to the minute, so compare whole minutes.
+        if (span != null && state.timestamp / 60_000 !in span.first / 60_000..span.second / 60_000) {
+            state = state.copy(timeOutOfTrip = span)
+            return
+        }
         viewModelScope.launch {
             dao.upsert(toEntry())
             if (originalPhotoPath != null && originalPhotoPath != state.photoPath) {

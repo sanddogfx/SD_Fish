@@ -34,9 +34,9 @@ private fun SdFishNavHost() {
     NavHost(navController = nav, startDestination = "home") {
         composable("home") {
             HomeScreen(
-                onAdd = { nav.navigate("edit/0") },
                 onOpen = { id -> nav.navigate("edit/$id") },
                 onStartTrip = { nav.navigate("trip/0") },
+                onStartTripForFish = { nav.navigate("trip/0?fish=true") },
                 onOpenTrip = { id -> nav.navigate("trip/$id") },
                 onAddFishToTrip = { tripId -> nav.navigate("edit/0?trip=$tripId") },
             )
@@ -55,12 +55,21 @@ private fun SdFishNavHost() {
             )
         }
         composable(
-            route = "trip/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.LongType }),
+            route = "trip/{id}?fish={fish}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.LongType },
+                navArgument("fish") { type = NavType.BoolType; defaultValue = false },
+            ),
         ) { entry ->
+            val addFishAfterStart = entry.arguments?.getBoolean("fish") ?: false
             TripScreen(
                 tripId = entry.arguments?.getLong("id") ?: 0L,
                 onDone = { nav.popBackStack() },
+                onStarted = { tripId ->
+                    nav.popBackStack()
+                    // Started from "add a fish": go straight on to that fish.
+                    if (addFishAfterStart) nav.navigate("edit/0?trip=$tripId")
+                },
                 onAddFish = { tripId -> nav.navigate("edit/0?trip=$tripId") },
                 onOpenCatch = { id -> nav.navigate("edit/$id") },
             )

@@ -75,4 +75,9 @@
     <string name="delete_trip_text">Рыба з гэтай рыбалкі застанецца ў спісе ўловаў.</string>
     <string name="from_trip">Рыбалка ад %1$s</string>
     <string name="method_not_set">Не пазначаны</string>
+    <string name="choose_trip_title">Куды дадаць рыбу?</string>
+    <string name="choose_trip_existing">Або ў адну з мінулых рыбалак:</string>
+    <string name="fish_time_out_of_trip">Час рыбы павінен быць у межах рыбалкі: %1$s – %2$s</string>
+    <string name="trip_end_before_start">Канец рыбалкі не можа быць раней за пачатак</string>
+    <string name="trip_must_cover_catches">Рыбалка павінна ўключаць час усіх яе рыб: %1$s – %2$s</string>
 </resources>

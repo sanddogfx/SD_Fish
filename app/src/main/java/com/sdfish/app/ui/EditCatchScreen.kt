@@ -108,6 +108,14 @@ fun EditCatchScreen(catchId: Long, newInTripId: Long, onDone: () -> Unit) {
     }
     val noCamera = stringResource(R.string.no_camera)
 
+    // The time is far up the screen; also say why Save did nothing.
+    val outOfTrip = s.timeOutOfTrip?.let { (from, to) ->
+        stringResource(R.string.fish_time_out_of_trip, Formats.dateTime(from), Formats.dateTime(to))
+    }
+    LaunchedEffect(outOfTrip) {
+        if (outOfTrip != null) Toast.makeText(context, outOfTrip, Toast.LENGTH_LONG).show()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -215,11 +223,15 @@ fun EditCatchScreen(catchId: Long, newInTripId: Long, onDone: () -> Unit) {
 
             // --- Place and time ---
             SectionTitle(stringResource(R.string.section_place))
-            OutlinedButton(onClick = { pickDateTime(context, s.timestamp) { t -> vm.update { it.copy(timestamp = t) } } }) {
+            OutlinedButton(
+                onClick = { pickDateTime(context, s.timestamp, vm::setTime) },
+                modifier = Modifier.testTag("catch_time"),
+            ) {
                 Icon(Icons.Filled.DateRange, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
                 Text(Formats.dateTime(s.timestamp))
             }
+            outOfTrip?.let { ErrorText(it) }
             PlaceSection(
                 latitude = s.latitude,
                 longitude = s.longitude,

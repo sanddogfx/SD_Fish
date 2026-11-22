@@ -75,4 +75,9 @@
     <string name="delete_trip_text">Ryby z tej wyprawy zostaną na liście połowów.</string>
     <string name="from_trip">Wyprawa z %1$s</string>
     <string name="method_not_set">Nie podano</string>
+    <string name="choose_trip_title">Gdzie dodać rybę?</string>
+    <string name="choose_trip_existing">Albo do jednej z wcześniejszych wypraw:</string>
+    <string name="fish_time_out_of_trip">Czas ryby musi mieścić się w czasie wyprawy: %1$s – %2$s</string>
+    <string name="trip_end_before_start">Koniec wyprawy nie może być przed początkiem</string>
+    <string name="trip_must_cover_catches">Wyprawa musi obejmować czas wszystkich ryb: %1$s – %2$s</string>
 </resources>
