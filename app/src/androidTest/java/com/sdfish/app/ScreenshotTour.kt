@@ -84,7 +84,7 @@ class ScreenshotTour {
         // Open the running trip, see its fish, end it.
         tap("active_trip")
         shot("10_trip_running", settleMs = 3000)
-        compose.onNodeWithTag("trip_finish").performScrollTo().performClick()
+        tap("trip_finish")
         tap("tab_trips")
         shot("11_trip_list")
 
