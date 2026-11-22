@@ -247,7 +247,10 @@ fun EditCatchScreen(catchId: Long, newInTripId: Long, onDone: () -> Unit) {
 @Composable
 private fun SpeciesField(text: String, onChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    val options = remember(text) { SpeciesCatalog.search(text) }
+    // Once a species is chosen, tapping the field again offers the whole list to change it.
+    val options = remember(text) {
+        if (SpeciesCatalog.all.any { it.isNamed(text.trim()) }) SpeciesCatalog.all else SpeciesCatalog.search(text)
+    }
     val showMenu = expanded && options.isNotEmpty()
     ExposedDropdownMenuBox(expanded = showMenu, onExpandedChange = { expanded = it }) {
         OutlinedTextField(

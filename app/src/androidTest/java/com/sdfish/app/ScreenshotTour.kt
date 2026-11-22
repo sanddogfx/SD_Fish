@@ -128,8 +128,18 @@ class ScreenshotTour {
         // Add a fish during the trip: place and method come from the trip.
         tap("add_fish")
         shot("04_fish_in_trip", settleMs = 4000)
+        // Tapping the empty species field lists all species.
+        tap("species")
+        compose.waitForIdle()
+        compose.onNodeWithTag("species_option_perch").assertExists()
+        shot("04b_species_all")
         compose.onNodeWithTag("species").performTextInput("Szczu")
         shot("05_species_list")
+        tap("species_option_pike")
+        // With a species chosen, tapping again offers the whole list to change it.
+        tap("species")
+        compose.waitForIdle()
+        compose.onNodeWithTag("species_option_perch").assertExists()
         tap("species_option_pike")
         compose.onNodeWithTag("weight").performTextInput("2,4")
         compose.onNodeWithTag("length").performTextInput("68")
