@@ -28,7 +28,8 @@ data class EditState(
     val speciesText: String = "",
     val weightText: String = "",
     val lengthText: String = "",
-    val photoPath: String? = null,
+    /** Photo files of this fish; the first one is shown in lists. */
+    val photos: List<String> = emptyList(),
     val note: String = "",
     val method: String? = null,
     val tripId: Long? = null,
@@ -52,7 +53,10 @@ class EditCatchViewModel(
 
     private val dao = (app as SdFishApp).database.catchDao()
     private val tripDao = (app as SdFishApp).database.tripDao()
-    private var originalPhotoPath: String? = null
+    private val photoDao = (app as SdFishApp).database.catchPhotoDao()
+    /** Photos saved before this screen opened; their files are removed only on Save. */
+    private var originalPhotos: List<String> = emptyList()
+    private var saved = false
 
     var state by mutableStateOf(EditState())
         private set
@@ -84,7 +88,7 @@ class EditCatchViewModel(
         if (catchId != 0L) {
             viewModelScope.launch {
                 dao.getById(catchId)?.let { e ->
-                    originalPhotoPath = e.photoPath
+                    originalPhotos = photoDao.pathsFor(e.id).ifEmpty { listOfNotNull(e.photoPath) }
                     val trip = e.tripId?.let { id -> tripDao.getById(id) }
                     state = EditState(
                         timestamp = e.timestamp,
@@ -94,7 +98,7 @@ class EditCatchViewModel(
                         speciesText = if (e.species.isBlank()) "" else SpeciesCatalog.displayName(e.species),
                         weightText = Formats.number(e.weightKg),
                         lengthText = Formats.number(e.lengthCm),
-                        photoPath = e.photoPath,
+                        photos = originalPhotos,
                         note = e.note,
                         method = e.method,
                         tripId = e.tripId,
@@ -148,18 +152,23 @@ class EditCatchViewModel(
         }
     }
 
-    fun setPhoto(path: String?) {
-        val previous = state.photoPath
-        // Remove a photo taken in this session that is being replaced; the saved one is kept until Save.
-        if (previous != null && previous != originalPhotoPath && previous != path) PhotoStorage.delete(previous)
-        state = state.copy(photoPath = path)
+    fun addPhoto(path: String) {
+        state = state.copy(photos = state.photos + path)
     }
 
-    fun importPhoto(uri: Uri) {
+    fun importPhotos(uris: List<Uri>) {
         viewModelScope.launch {
-            val file = withContext(Dispatchers.IO) { PhotoStorage.copyFromUri(getApplication(), uri) }
-            if (file != null) setPhoto(file.absolutePath)
+            uris.forEach { uri ->
+                val file = withContext(Dispatchers.IO) { PhotoStorage.copyFromUri(getApplication(), uri) }
+                if (file != null) addPhoto(file.absolutePath)
+            }
         }
+    }
+
+    fun removePhoto(path: String) {
+        state = state.copy(photos = state.photos - path)
+        // A photo added on this screen can go now; a saved one is removed on Save.
+        if (path !in originalPhotos) PhotoStorage.delete(path)
     }
 
     private fun toEntry() = CatchEntry(
@@ -171,7 +180,7 @@ class EditCatchViewModel(
         species = SpeciesCatalog.toStored(state.speciesText),
         weightKg = Formats.parseNumber(state.weightText),
         lengthCm = Formats.parseNumber(state.lengthText),
-        photoPath = state.photoPath,
+        photoPath = state.photos.firstOrNull(),
         note = state.note.trim(),
         tripId = state.tripId,
         method = state.method,
@@ -185,10 +194,12 @@ class EditCatchViewModel(
             return
         }
         viewModelScope.launch {
-            dao.upsert(toEntry())
-            if (originalPhotoPath != null && originalPhotoPath != state.photoPath) {
-                withContext(Dispatchers.IO) { PhotoStorage.delete(originalPhotoPath) }
-            }
+            val newId = dao.upsert(toEntry())
+            val id = if (catchId == 0L) newId else catchId
+            photoDao.replace(id, state.photos)
+            saved = true
+            val dropped = originalPhotos - state.photos.toSet()
+            withContext(Dispatchers.IO) { dropped.forEach(PhotoStorage::delete) }
             onSaved()
         }
     }
@@ -196,12 +207,17 @@ class EditCatchViewModel(
     fun delete(onDeleted: () -> Unit) {
         viewModelScope.launch {
             dao.delete(toEntry())
-            withContext(Dispatchers.IO) {
-                PhotoStorage.delete(state.photoPath)
-                if (originalPhotoPath != state.photoPath) PhotoStorage.delete(originalPhotoPath)
-            }
+            photoDao.deleteFor(catchId)
+            saved = true
+            val files = (state.photos + originalPhotos).distinct()
+            withContext(Dispatchers.IO) { files.forEach(PhotoStorage::delete) }
             onDeleted()
         }
+    }
+
+    override fun onCleared() {
+        // Left without saving: remove photos added on this screen.
+        if (!saved) (state.photos - originalPhotos.toSet()).forEach(PhotoStorage::delete)
     }
 
     companion object {

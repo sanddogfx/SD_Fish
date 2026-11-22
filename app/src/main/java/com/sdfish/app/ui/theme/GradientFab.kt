@@ -2,6 +2,8 @@ package com.sdfish.app.ui.theme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -21,9 +23,11 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GradientFab(
     text: String,
-    icon: ImageVector,
+    icon: ImageVector?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Stretch to the given width with the text centred, for buttons sharing a row. */
+    fill: Boolean = false,
 ) {
     Surface(
         onClick = onClick,
@@ -35,11 +39,16 @@ fun GradientFab(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.background(AccentBrush).padding(start = 18.dp, end = 22.dp, top = 16.dp, bottom = 16.dp),
+            horizontalArrangement = Arrangement.Center,
+            modifier = (if (fill) Modifier.fillMaxWidth() else Modifier)
+                .background(AccentBrush)
+                .padding(start = if (icon != null) 18.dp else 16.dp, end = if (icon != null) 22.dp else 16.dp, top = 16.dp, bottom = 16.dp),
         ) {
-            Icon(icon, contentDescription = null)
-            Spacer(Modifier.width(10.dp))
-            Text(text, style = MaterialTheme.typography.labelLarge)
+            if (icon != null) {
+                Icon(icon, contentDescription = null)
+                Spacer(Modifier.width(10.dp))
+            }
+            Text(text, style = MaterialTheme.typography.labelLarge, maxLines = 1)
         }
     }
 }

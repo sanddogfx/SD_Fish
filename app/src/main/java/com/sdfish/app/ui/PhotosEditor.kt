@@ -34,26 +34,33 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.sdfish.app.PhotoStorage
 import com.sdfish.app.R
-import com.sdfish.app.data.TripPhoto
 import java.io.File
 
-/** Photos of a trip: a row of thumbnails, camera and gallery buttons, tap a photo to view or delete it. */
+/**
+ * Photos of a trip or a fish: a row of thumbnails, camera and gallery buttons,
+ * tap a photo to view or delete it. [paths] are files in app storage.
+ */
 @Composable
-fun TripPhotosSection(
-    photos: List<TripPhoto>,
+fun PhotosEditor(
+    title: String,
+    paths: List<String>,
+    filePrefix: String,
+    testTag: String,
     onTaken: (String) -> Unit,
     onPicked: (List<android.net.Uri>) -> Unit,
-    onDelete: (TripPhoto) -> Unit,
+    onDelete: (String) -> Unit,
+    thumbSize: Dp = 112.dp,
 ) {
     val context = LocalContext.current
     var pendingPhoto by rememberSaveable { mutableStateOf<String?>(null) }
-    var viewing by remember { mutableStateOf<TripPhoto?>(null) }
+    var viewing by remember { mutableStateOf<String?>(null) }
     val noCamera = stringResource(R.string.no_camera)
     val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
         pendingPhoto?.let { path -> if (ok) onTaken(path) else File(path).delete() }
@@ -63,16 +70,16 @@ fun TripPhotosSection(
         if (uris.isNotEmpty()) onPicked(uris)
     }
 
-    SectionTitle(stringResource(R.string.trip_photos, photos.size))
-    if (photos.isNotEmpty()) {
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.testTag("trip_photos")) {
-            items(photos, key = { it.id }) { photo ->
+    SectionTitle(title)
+    if (paths.isNotEmpty()) {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.testTag(testTag)) {
+            items(paths, key = { it }) { photo ->
                 AsyncImage(
-                    model = File(photo.path),
+                    model = File(photo),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(112.dp)
+                        .size(thumbSize)
                         .clip(RoundedCornerShape(10.dp))
                         .clickable { viewing = photo },
                 )
@@ -81,7 +88,7 @@ fun TripPhotosSection(
     }
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedButton(onClick = {
-            val file = PhotoStorage.newPhotoFile(context, "trip")
+            val file = PhotoStorage.newPhotoFile(context, filePrefix)
             pendingPhoto = file.absolutePath
             try {
                 cameraLauncher.launch(PhotoStorage.uriFor(context, file))
@@ -100,7 +107,7 @@ fun TripPhotosSection(
             Surface(shape = RoundedCornerShape(16.dp), modifier = Modifier.padding(16.dp)) {
                 Column(horizontalAlignment = Alignment.End) {
                     AsyncImage(
-                        model = File(photo.path),
+                        model = File(photo),
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier.fillMaxWidth().heightIn(max = 560.dp),

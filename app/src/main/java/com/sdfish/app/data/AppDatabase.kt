@@ -7,12 +7,13 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [CatchEntry::class, FishingTrip::class, TrackPoint::class, TripPhoto::class], version = 4, exportSchema = true)
+@Database(entities = [CatchEntry::class, FishingTrip::class, TrackPoint::class, TripPhoto::class, CatchPhoto::class], version = 5, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun catchDao(): CatchDao
     abstract fun tripDao(): TripDao
     abstract fun trackDao(): TrackDao
     abstract fun tripPhotoDao(): TripPhotoDao
+    abstract fun catchPhotoDao(): CatchPhotoDao
 
     companion object {
         const val NAME = "sdfish.db"
@@ -53,9 +54,24 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /** Version 5 lets a fish have several photos; the existing photo becomes the first one. */
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `catch_photos` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`catchId` INTEGER NOT NULL, `path` TEXT NOT NULL, `position` INTEGER NOT NULL)"
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_catch_photos_catchId` ON `catch_photos` (`catchId`)")
+                db.execSQL(
+                    "INSERT INTO catch_photos (catchId, path, position) " +
+                        "SELECT id, photoPath, 0 FROM catches WHERE photoPath IS NOT NULL"
+                )
+            }
+        }
+
         fun create(context: Context, name: String = NAME): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, name)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build()
     }
 }

@@ -98,15 +98,6 @@ fun EditCatchScreen(catchId: Long, newInTripId: Long, onDone: () -> Unit) {
         }
     }
 
-    var pendingPhoto by rememberSaveable { mutableStateOf<String?>(null) }
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
-        pendingPhoto?.let { path -> if (ok) vm.setPhoto(path) else File(path).delete() }
-        pendingPhoto = null
-    }
-    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) vm.importPhoto(uri)
-    }
-    val noCamera = stringResource(R.string.no_camera)
 
     // The time is far up the screen; also say why Save did nothing.
     val outOfTrip = s.timeOutOfTrip?.let { (from, to) ->
@@ -178,37 +169,17 @@ fun EditCatchScreen(catchId: Long, newInTripId: Long, onDone: () -> Unit) {
                 )
             }
 
-            // --- Photo ---
-            SectionTitle(stringResource(R.string.section_photo))
-            s.photoPath?.let { path ->
-                AsyncImage(
-                    model = File(path),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(240.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                )
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = {
-                    val file = PhotoStorage.newPhotoFile(context)
-                    pendingPhoto = file.absolutePath
-                    try {
-                        cameraLauncher.launch(PhotoStorage.uriFor(context, file))
-                    } catch (e: ActivityNotFoundException) {
-                        pendingPhoto = null
-                        Toast.makeText(context, noCamera, Toast.LENGTH_SHORT).show()
-                    }
-                }) { Text(stringResource(R.string.take_photo)) }
-                OutlinedButton(onClick = {
-                    galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                }) { Text(stringResource(R.string.pick_photo)) }
-                if (s.photoPath != null) {
-                    TextButton(onClick = { vm.setPhoto(null) }) { Text(stringResource(R.string.remove_photo)) }
-                }
-            }
+            // --- Photos ---
+            PhotosEditor(
+                title = stringResource(R.string.section_photo),
+                paths = s.photos,
+                filePrefix = "catch",
+                testTag = "catch_photos",
+                onTaken = vm::addPhoto,
+                onPicked = vm::importPhotos,
+                onDelete = vm::removePhoto,
+                thumbSize = 160.dp,
+            )
 
             // --- Method and trip ---
             SectionTitle(stringResource(R.string.section_method))
