@@ -54,6 +54,8 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -172,6 +174,8 @@ fun HomeScreen(
                 )
             }
         },
+        // With no trip running, the trips and map tabs show two buttons across the bottom.
+        floatingActionButtonPosition = if (activeTrip == null && tab != 1) FabPosition.Center else FabPosition.End,
         floatingActionButton = {
             val active = activeTrip
             when {
@@ -188,19 +192,28 @@ fun HomeScreen(
                     onClick = { chooseTrip = true },
                     modifier = Modifier.testTag("add_catch"),
                 )
-                else -> Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    ExtendedFloatingActionButton(
+                // Two buttons side by side across the screen, so neither hides the list.
+                else -> Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                ) {
+                    Surface(
                         onClick = onAddPastTrip,
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                        modifier = Modifier.testTag("add_past_trip"),
-                        icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                        text = { Text(stringResource(R.string.add_trip)) },
-                    )
+                        shape = RoundedCornerShape(50),
+                        color = MaterialTheme.colorScheme.surfaceContainerHighest,
+                        shadowElevation = 6.dp,
+                        modifier = Modifier.weight(1f).testTag("add_past_trip"),
+                    ) {
+                        Box(Modifier.padding(vertical = 16.dp, horizontal = 12.dp), contentAlignment = Alignment.Center) {
+                            Text(stringResource(R.string.add_trip), style = MaterialTheme.typography.labelLarge, maxLines = 1)
+                        }
+                    }
                     GradientFab(
                         text = stringResource(R.string.start_fishing),
-                        icon = Icons.Filled.PlayArrow,
+                        icon = null,
                         onClick = onStartTrip,
-                        modifier = Modifier.testTag("start_trip"),
+                        fill = true,
+                        modifier = Modifier.weight(1f).testTag("start_trip"),
                     )
                 }
             }
