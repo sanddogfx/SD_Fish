@@ -46,7 +46,7 @@
     <string name="update_failed">Не удалось скачать. Проверь интернет и попробуй ещё раз.</string>
     <string name="update_later">Позже</string>
     <string name="update_now">Обновить</string>
-    <string name="update_allow_install">Разреши установку для SD_Fish, вернись и нажми «Обновить» ещё раз</string>
+    <string name="update_allow_install">Разреши установку для Loopcast Fishing, вернись и нажми «Обновить» ещё раз</string>
 
     <string name="settings">Настройки</string>
     <string name="language">Язык</string>

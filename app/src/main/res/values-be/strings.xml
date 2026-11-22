@@ -46,7 +46,7 @@
     <string name="update_failed">Не атрымалася спампаваць. Правер інтэрнэт і паспрабуй яшчэ раз.</string>
     <string name="update_later">Пазней</string>
     <string name="update_now">Абнавіць</string>
-    <string name="update_allow_install">Дазволь усталёўку для SD_Fish, вярніся і націсні «Абнавіць» яшчэ раз</string>
+    <string name="update_allow_install">Дазволь усталёўку для Loopcast Fishing, вярніся і націсні «Абнавіць» яшчэ раз</string>
 
     <string name="settings">Налады</string>
     <string name="language">Мова</string>

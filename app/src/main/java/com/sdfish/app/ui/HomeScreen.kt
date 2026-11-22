@@ -141,7 +141,11 @@ fun HomeScreen(
                     AppLogo()
                     Spacer(Modifier.width(12.dp))
                     Column {
-                        Text(stringResource(R.string.app_name))
+                        Text(
+                            stringResource(R.string.app_name),
+                            maxLines = 1,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                        )
                         Text(
                             stringResource(R.string.version_label, BuildConfig.VERSION_NAME),
                             style = MaterialTheme.typography.labelSmall,

@@ -46,7 +46,7 @@
     <string name="update_failed">Nie udało się pobrać. Sprawdź internet i spróbuj ponownie.</string>
     <string name="update_later">Później</string>
     <string name="update_now">Aktualizuj</string>
-    <string name="update_allow_install">Zezwól SD_Fish na instalowanie aplikacji, wróć i naciśnij „Aktualizuj” jeszcze raz</string>
+    <string name="update_allow_install">Zezwól Loopcast Fishing na instalowanie aplikacji, wróć i naciśnij „Aktualizuj” jeszcze raz</string>
 
     <string name="settings">Ustawienia</string>
     <string name="language">Język</string>

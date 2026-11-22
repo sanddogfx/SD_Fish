@@ -17,7 +17,7 @@ class SdFishApp : Application() {
         // so no storage permission is needed and viewed areas work offline later.
         val osm = Configuration.getInstance()
         osm.load(this, getSharedPreferences("osmdroid", MODE_PRIVATE))
-        osm.userAgentValue = "SD_Fish/${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
+        osm.userAgentValue = "LoopcastFishing/${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})"
         val base = File(filesDir, "osmdroid")
         osm.osmdroidBasePath = base
         osm.osmdroidTileCache = File(base, "tiles")

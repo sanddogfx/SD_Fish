@@ -28,21 +28,21 @@ jobs:
           ./gradlew assembleDebug --stacktrace
 
       - name: Name the APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk "SD_Fish-0.1.${{ github.run_number }}.apk"
+        run: cp app/build/outputs/apk/debug/app-debug.apk "Loopcast-0.1.${{ github.run_number }}.apk"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: SD_Fish-0.1.${{ github.run_number }}
-          path: SD_Fish-*.apk
+          name: Loopcast-0.1.${{ github.run_number }}
+          path: Loopcast-*.apk
 
       - name: Publish to Releases
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: SD_Fish 0.1.${{ github.run_number }}
+          name: Loopcast Fishing 0.1.${{ github.run_number }}
           body: Тестовая сборка. Скачай APK ниже и установи на телефон.
-          files: SD_Fish-*.apk
+          files: Loopcast-*.apk
           make_latest: true
 
   screenshots:

@@ -58,7 +58,7 @@ object Updater {
                 mkdirs()
                 listFiles()?.forEach { it.delete() }
             }
-            val file = File(dir, "SD_Fish-${info.versionCode}.apk")
+            val file = File(dir, "Loopcast-${info.versionCode}.apk")
             val conn = (URL(info.apkUrl).openConnection() as HttpURLConnection).apply {
                 instanceFollowRedirects = true
                 connectTimeout = 15_000
