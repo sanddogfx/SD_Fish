@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.sdfish.app.BuildConfig
 import com.sdfish.app.Formats
 import com.sdfish.app.R
 import com.sdfish.app.SdFishApp
@@ -70,7 +71,18 @@ fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
+        topBar = {
+            TopAppBar(title = {
+                Column {
+                    Text(stringResource(R.string.app_name))
+                    Text(
+                        stringResource(R.string.version_label, BuildConfig.VERSION_NAME),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            })
+        },
         bottomBar = {
             NavigationBar {
                 NavigationBarItem(

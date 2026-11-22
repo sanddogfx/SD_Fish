@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">SD_Fish</string>
 
+    <string name="version_label">версия %1$s</string>
     <string name="tab_catches">Уловы</string>
     <string name="tab_map">Карта</string>
     <string name="add_catch">Улов</string>
