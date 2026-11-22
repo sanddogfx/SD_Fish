@@ -136,7 +136,7 @@ class ScreenshotTour {
         val fishId = addSampleFishPhotos()
         shot("09_catch_list")
         // Opening the fish shows all its photos.
-        tap("catch_thumb_$fishId")
+        compose.onNodeWithTag("catch_thumb_$fishId", useUnmergedTree = true).performClick()
         compose.onNodeWithTag("catch_photos").performScrollTo()
         shot("09b_fish_photos", settleMs = 3000)
         compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
