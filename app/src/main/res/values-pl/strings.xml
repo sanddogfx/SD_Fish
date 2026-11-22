@@ -95,4 +95,49 @@
     <string name="theme">Motyw</string>
     <string name="theme_dark">Ciemny</string>
     <string name="theme_light">Jasny</string>
+    <string name="section_weather">Pogoda</string>
+    <string name="weather_pending">Pogoda pojawi się, gdy telefon będzie online</string>
+    <string name="weather_no_place">Ustaw miejsce, aby zobaczyć pogodę</string>
+    <string name="weather_clear">Bezchmurnie</string>
+    <string name="weather_partly">Częściowe zachmurzenie</string>
+    <string name="weather_overcast">Pochmurno</string>
+    <string name="weather_fog">Mgła</string>
+    <string name="weather_drizzle">Mżawka</string>
+    <string name="weather_rain">Deszcz</string>
+    <string name="weather_snow">Śnieg</string>
+    <string name="weather_showers">Przelotne opady</string>
+    <string name="weather_thunder">Burza</string>
+    <string name="pressure_hpa">%1$s hPa</string>
+    <string name="pressure_mmhg">%1$s mmHg</string>
+    <string name="pressure_rising">rośnie</string>
+    <string name="pressure_falling">spada</string>
+    <string name="pressure_steady">stabilne</string>
+    <string name="wind_ms">%1$s m/s</string>
+    <string name="weather_pressure">Ciśnienie</string>
+    <string name="weather_wind">Wiatr</string>
+    <string name="weather_clouds">Zachmurzenie</string>
+    <string name="weather_precip">Opady</string>
+    <string name="weather_moon">Księżyc</string>
+    <string name="precip_mm">%1$s mm</string>
+    <string name="percent">%1$s%%</string>
+    <string-array name="compass_points">
+        <item>N</item>
+        <item>NE</item>
+        <item>E</item>
+        <item>SE</item>
+        <item>S</item>
+        <item>SW</item>
+        <item>W</item>
+        <item>NW</item>
+    </string-array>
+    <string-array name="moon_phases">
+        <item>Nów</item>
+        <item>Przybywający sierp</item>
+        <item>Pierwsza kwadra</item>
+        <item>Przybywający garb</item>
+        <item>Pełnia</item>
+        <item>Ubywający garb</item>
+        <item>Ostatnia kwadra</item>
+        <item>Ubywający sierp</item>
+    </string-array>
 </resources>

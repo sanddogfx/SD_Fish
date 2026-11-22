@@ -128,6 +128,12 @@ fun HomeScreen(
     var tripToDelete by remember { mutableStateOf<FishingTrip?>(null) }
     var catchToDelete by remember { mutableStateOf<CatchEntry?>(null) }
 
+    // Look up the weather of trips that lack it, whenever trips change (only works when online).
+    val weatherKey = trips?.map { listOf(it.trip.id, it.trip.startTime, it.trip.latitude, it.trip.longitude, it.weather == null) }
+    LaunchedEffect(weatherKey) {
+        if (weatherKey != null) com.sdfish.app.weather.WeatherSync.syncMissing(db)
+    }
+
     // Keep recording the route of a running trip, also after the phone restarted the app.
     val activeId = activeTrip?.id
     LaunchedEffect(activeId) {
@@ -509,6 +515,7 @@ private fun TripCard(item: TripWithCount, onClick: () -> Unit) {
                 ).joinToString(" · "),
                 style = MaterialTheme.typography.bodyMedium,
             )
+            item.weather?.let { WeatherLine(it, Modifier.padding(top = 4.dp).testTag("trip_weather_line_${trip.id}")) }
         }
     }
 }

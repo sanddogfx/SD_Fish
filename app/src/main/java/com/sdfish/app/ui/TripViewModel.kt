@@ -76,6 +76,12 @@ class TripViewModel(
     val photos: Flow<List<TripPhoto>> =
         if (tripId == 0L) flowOf(emptyList()) else db.tripPhotoDao().observeByTrip(tripId)
 
+    val weather: Flow<com.sdfish.app.data.TripWeather?> =
+        if (tripId == 0L) flowOf(null) else db.tripWeatherDao().observe(tripId)
+
+    /** Looks up missing weather while the trip is open (only when online). */
+    suspend fun syncWeather() = com.sdfish.app.weather.WeatherSync.syncMissing(db)
+
     val catches: Flow<List<CatchEntry>> =
         if (tripId == 0L) flowOf(emptyList()) else db.catchDao().observeByTrip(tripId)
 

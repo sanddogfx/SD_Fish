@@ -100,6 +100,7 @@ jobs:
           mkdir -p "$out"
           cp screenshots/*.png "$out/" 2>/dev/null || true
           cp instrument.log "$out/" 2>/dev/null || true
+          cp screenshots/app.log "$out/" 2>/dev/null || true
           cd "$dir"
           git add -A
           git commit -qm "Screenshots for build ${{ github.run_number }}" || exit 0

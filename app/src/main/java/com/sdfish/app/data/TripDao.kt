@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TripDao {
+    @Transaction
     @Query(
         "SELECT trips.*, (SELECT COUNT(*) FROM catches WHERE catches.tripId = trips.id) AS catchCount, " +
             "(SELECT SUM(weightKg) FROM catches WHERE catches.tripId = trips.id) AS totalWeightKg " +
@@ -17,6 +18,9 @@ interface TripDao {
 
     @Query("SELECT * FROM trips WHERE endTime IS NULL ORDER BY startTime DESC LIMIT 1")
     fun observeActive(): Flow<FishingTrip?>
+
+    @Query("SELECT * FROM trips WHERE latitude IS NOT NULL AND longitude IS NOT NULL ORDER BY startTime DESC")
+    suspend fun withPlace(): List<FishingTrip>
 
     @Query("SELECT * FROM trips WHERE id = :id")
     suspend fun getById(id: Long): FishingTrip?
@@ -36,12 +40,16 @@ interface TripDao {
     @Query("DELETE FROM trip_photos WHERE tripId = :tripId")
     suspend fun deletePhotos(tripId: Long)
 
-    /** Deletes the trip, its route and photo records; its catches stay as separate catches. */
+    @Query("DELETE FROM trip_weather WHERE tripId = :tripId")
+    suspend fun deleteWeather(tripId: Long)
+
+    /** Deletes the trip, its route, photo and weather records; its catches stay as separate catches. */
     @Transaction
     suspend fun delete(id: Long) {
         detachCatches(id)
         deleteRoute(id)
         deletePhotos(id)
+        deleteWeather(id)
         deleteTrip(id)
     }
 }

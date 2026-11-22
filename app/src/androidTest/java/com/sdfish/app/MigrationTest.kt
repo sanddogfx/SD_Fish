@@ -45,6 +45,7 @@ class MigrationTest {
             assertEquals(0, runBlocking { room.tripDao().observeWithCounts().first() }.size)
             assertEquals(0, runBlocking { room.trackDao().observeByTrip(1).first() }.size)
             assertEquals(0, runBlocking { room.tripPhotoDao().byTrip(1) }.size)
+            assertNull(runBlocking { room.tripWeatherDao().get(1) })
             // The old single photo became the first of the fish's photos.
             assertEquals(listOf("/old/pike.jpg"), runBlocking { room.catchPhotoDao().pathsFor(catches[0].id) })
         } finally {
