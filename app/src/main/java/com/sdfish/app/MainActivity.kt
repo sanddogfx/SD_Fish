@@ -37,6 +37,7 @@ private fun SdFishNavHost() {
                 onOpen = { id -> nav.navigate("edit/$id") },
                 onStartTrip = { nav.navigate("trip/0") },
                 onStartTripForFish = { nav.navigate("trip/0?fish=true") },
+                onAddPastTrip = { nav.navigate("trip/0?past=true") },
                 onOpenTrip = { id -> nav.navigate("trip/$id") },
                 onAddFishToTrip = { tripId -> nav.navigate("edit/0?trip=$tripId") },
             )
@@ -55,15 +56,17 @@ private fun SdFishNavHost() {
             )
         }
         composable(
-            route = "trip/{id}?fish={fish}",
+            route = "trip/{id}?fish={fish}&past={past}",
             arguments = listOf(
                 navArgument("id") { type = NavType.LongType },
                 navArgument("fish") { type = NavType.BoolType; defaultValue = false },
+                navArgument("past") { type = NavType.BoolType; defaultValue = false },
             ),
         ) { entry ->
             val addFishAfterStart = entry.arguments?.getBoolean("fish") ?: false
             TripScreen(
                 tripId = entry.arguments?.getLong("id") ?: 0L,
+                isPast = entry.arguments?.getBoolean("past") ?: false,
                 onDone = { nav.popBackStack() },
                 onStarted = { tripId ->
                     nav.popBackStack()

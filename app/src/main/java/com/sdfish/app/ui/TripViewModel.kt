@@ -45,12 +45,25 @@ sealed interface TripTimeError {
     data class OutsideCatches(val first: Long, val last: Long) : TripTimeError
 }
 
-class TripViewModel(app: Application, private val tripId: Long) : AndroidViewModel(app) {
+class TripViewModel(
+    app: Application,
+    private val tripId: Long,
+    /** A new trip that already happened: entered by hand with start and end, no timer or route. */
+    val isPast: Boolean = false,
+) : AndroidViewModel(app) {
 
     private val db = (app as SdFishApp).database
     private val tripDao = db.tripDao()
 
-    var state by mutableStateOf(TripState())
+    var state by mutableStateOf(
+        if (tripId == 0L && isPast) {
+            // Default: a three-hour trip that ended now, to the minute.
+            val now = System.currentTimeMillis() / 60_000 * 60_000
+            TripState(startTime = now - 3 * 3_600_000L, endTime = now)
+        } else {
+            TripState()
+        }
+    )
         private set
 
     var locationRequested = false
@@ -98,10 +111,11 @@ class TripViewModel(app: Application, private val tripId: Long) : AndroidViewMod
 
     /** Checks that the trip times are in order and cover all its fish. Times are compared to the minute. */
     private suspend fun checkTimes(endTime: Long?): TripTimeError? {
-        if (isNew) return null
+        if (isNew && !isPast) return null
         val start = state.startTime / 60_000
         val end = endTime?.let { it / 60_000 }
         if (end != null && end < start) return TripTimeError.EndBeforeStart
+        if (isNew) return null
         val times = db.catchDao().timesInTrip(tripId)
         if (times.isEmpty()) return null
         val first = times.min()
@@ -141,7 +155,7 @@ class TripViewModel(app: Application, private val tripId: Long) : AndroidViewMod
 
     private fun toTrip(endTime: Long?) = FishingTrip(
         id = tripId,
-        startTime = if (isNew) System.currentTimeMillis() else state.startTime,
+        startTime = if (isNew && !isPast) System.currentTimeMillis() else state.startTime,
         endTime = endTime,
         latitude = state.latitude,
         longitude = state.longitude,
@@ -202,8 +216,8 @@ class TripViewModel(app: Application, private val tripId: Long) : AndroidViewMod
     }
 
     companion object {
-        fun factory(tripId: Long): ViewModelProvider.Factory = viewModelFactory {
-            initializer { TripViewModel(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!, tripId) }
+        fun factory(tripId: Long, isPast: Boolean = false): ViewModelProvider.Factory = viewModelFactory {
+            initializer { TripViewModel(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!, tripId, isPast) }
         }
     }
 }
