@@ -91,4 +91,5 @@
     <string name="route_none">No route recorded</string>
     <string name="route_channel">Route recording</string>
     <string name="change_place">Change place</string>
+    <string name="trip_photos">Photos (%1$d)</string>
 </resources>

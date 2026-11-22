@@ -4,6 +4,7 @@ import android.Manifest
 import android.graphics.Bitmap
 import android.os.Build
 import com.sdfish.app.data.TrackPoint
+import com.sdfish.app.data.TripPhoto
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -69,6 +70,21 @@ class ScreenshotTour {
         }
     }
 
+    /** A plain picture standing in for a photo of the spot, since the emulator camera shows nothing useful. */
+    private fun addSamplePhoto() = runBlocking {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val db = SdFishApp.from(context).database
+        val trip = db.tripDao().observeActive().first() ?: return@runBlocking
+        val bitmap = Bitmap.createBitmap(800, 600, Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bitmap)
+        canvas.drawColor(android.graphics.Color.rgb(120, 170, 210))
+        val paint = android.graphics.Paint().apply { color = android.graphics.Color.rgb(60, 120, 70) }
+        canvas.drawRect(0f, 380f, 800f, 600f, paint)
+        val file = PhotoStorage.newPhotoFile(context, "trip")
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
+        db.tripPhotoDao().insert(TripPhoto(tripId = trip.id, path = file.absolutePath, addedAt = System.currentTimeMillis()))
+    }
+
     private fun tap(tag: String) = compose.onNodeWithTag(tag).performClick()
 
     @Test
@@ -104,12 +120,15 @@ class ScreenshotTour {
 
         // The emulator does not move, so add a short walk along the shore to show the route.
         addSampleRoute()
+        addSamplePhoto()
 
         // Open the running trip, see its fish and route, end it.
         tap("active_trip")
         shot("10_trip_running", settleMs = 3000)
         compose.onNodeWithTag("route_map").performScrollTo()
         shot("10b_trip_route", settleMs = 5000)
+        compose.onNodeWithTag("trip_photos").performScrollTo()
+        shot("10c_trip_photos")
         tap("trip_finish")
         tap("tab_trips")
         shot("11_trip_list")
