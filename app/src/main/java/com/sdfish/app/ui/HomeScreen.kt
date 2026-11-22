@@ -37,6 +37,12 @@ import com.sdfish.app.data.TripWithCount
 import kotlinx.coroutines.launch
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.TextButton
 import androidx.compose.foundation.selection.selectable
@@ -131,16 +137,27 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(title = {
-                Column {
-                    Text(stringResource(R.string.app_name))
-                    Text(
-                        stringResource(R.string.version_label, BuildConfig.VERSION_NAME),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AppLogo()
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(stringResource(R.string.app_name))
+                        Text(
+                            stringResource(R.string.version_label, BuildConfig.VERSION_NAME),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }, actions = {
-                IconButton(onClick = { showSettings = true }, modifier = Modifier.testTag("settings")) {
+                FilledTonalIconButton(
+                    onClick = { showSettings = true },
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
+                    modifier = Modifier.padding(end = 8.dp).testTag("settings"),
+                ) {
                     Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.settings))
                 }
             })
@@ -278,6 +295,19 @@ fun HomeScreen(
             onPick = { id -> chooseTrip = false; onAddFishToTrip(id) },
             onDismiss = { chooseTrip = false },
         )
+    }
+}
+
+/** The infinity-fish logo on a graphite tile, as on the launcher icon. */
+@Composable
+private fun AppLogo() {
+    // In the dark theme the tile is a shade lighter than the background so it stays visible.
+    val tile = if (isSystemInDarkTheme()) Color(0xFF2A2F28) else Color(0xFF1C201B)
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(40.dp).clip(RoundedCornerShape(12.dp)).background(tile),
+    ) {
+        Image(painterResource(R.drawable.ic_logo), contentDescription = null, modifier = Modifier.size(40.dp))
     }
 }
 
