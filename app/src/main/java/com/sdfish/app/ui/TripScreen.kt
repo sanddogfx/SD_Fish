@@ -164,6 +164,7 @@ fun TripScreen(
                 recenterToken = s.recenterToken,
                 onPick = vm::setPosition,
                 onRequestLocation = requestLocation,
+                startLocked = !vm.isNew,
             )
 
             if (!vm.isNew) {

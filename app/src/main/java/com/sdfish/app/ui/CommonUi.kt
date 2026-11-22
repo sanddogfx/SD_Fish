@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -86,7 +88,11 @@ fun rememberLocationRequest(onGranted: () -> Unit, onDenied: () -> Unit): () -> 
     }
 }
 
-/** Map with the chosen point, GPS status, coordinates and a "locate again" button. */
+/**
+ * Map with the chosen point, GPS status, coordinates and a "locate again" button.
+ * With [startLocked] (a saved trip or fish) the place can't be changed by an accidental
+ * tap on the map: the user first presses "Change place".
+ */
 @Composable
 fun PlaceSection(
     latitude: Double?,
@@ -96,8 +102,10 @@ fun PlaceSection(
     recenterToken: Int,
     onPick: (Double, Double) -> Unit,
     onRequestLocation: () -> Unit,
+    startLocked: Boolean = false,
 ) {
-    LocationPicker(latitude, longitude, recenterToken, onPick)
+    var editable by rememberSaveable { mutableStateOf(!startLocked) }
+    LocationPicker(latitude, longitude, recenterToken, editable, onPick)
     when (status) {
         LocationStatus.Locating -> {
             Text(stringResource(R.string.locating))
@@ -119,26 +127,43 @@ fun PlaceSection(
                     )
                 }
             }
-            Text(
-                stringResource(R.string.location_hint),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            if (editable) {
+                Text(
+                    stringResource(R.string.location_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
-        TextButton(onClick = onRequestLocation, enabled = status != LocationStatus.Locating) {
-            Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.width(4.dp))
-            Text(stringResource(R.string.refresh_location))
+        if (editable) {
+            TextButton(onClick = onRequestLocation, enabled = status != LocationStatus.Locating) {
+                Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(stringResource(R.string.refresh_location))
+            }
+        } else {
+            TextButton(onClick = { editable = true }, modifier = Modifier.testTag("edit_place")) {
+                Icon(Icons.Filled.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(4.dp))
+                Text(stringResource(R.string.change_place))
+            }
         }
     }
 }
 
-/** Small map: shows the point; tap the map or drag the pin to move it. */
+/** Small map: shows the point; when [editable], tap the map or drag the pin to move it. */
 @Composable
-private fun LocationPicker(latitude: Double?, longitude: Double?, recenterToken: Int, onPick: (Double, Double) -> Unit) {
+private fun LocationPicker(
+    latitude: Double?,
+    longitude: Double?,
+    recenterToken: Int,
+    editable: Boolean,
+    onPick: (Double, Double) -> Unit,
+) {
     val context = LocalContext.current
     val mapView = rememberMapView()
     val pick by rememberUpdatedState(onPick)
+    val canEdit by rememberUpdatedState(editable)
     val marker = remember {
         Marker(mapView).apply {
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
@@ -157,6 +182,7 @@ private fun LocationPicker(latitude: Double?, longitude: Double?, recenterToken:
     val tapOverlay = remember {
         MapEventsOverlay(object : MapEventsReceiver {
             override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
+                if (!canEdit) return false
                 pick(p.latitude, p.longitude)
                 return true
             }
@@ -184,6 +210,7 @@ private fun LocationPicker(latitude: Double?, longitude: Double?, recenterToken:
             }
         },
         update = { map ->
+            marker.isDraggable = editable
             if (latitude != null && longitude != null) {
                 marker.position = GeoPoint(latitude, longitude)
                 marker.isEnabled = true
