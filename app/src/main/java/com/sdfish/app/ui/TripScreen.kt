@@ -1,5 +1,12 @@
 package com.sdfish.app.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -65,7 +72,18 @@ fun TripScreen(
     val vm: TripViewModel = viewModel(factory = TripViewModel.factory(tripId))
     val s = vm.state
     val catches by vm.catches.collectAsStateWithLifecycle(initialValue = emptyList())
+    val route by vm.route.collectAsStateWithLifecycle(initialValue = emptyList())
     var confirmDelete by remember { mutableStateOf(false) }
+
+    // The route is recorded with a notification; ask once to show it (Android 13+), then start either way.
+    val notificationRequest = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        vm.save(onStarted)
+    }
+    val startTrip = {
+        val needsAsk = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        if (needsAsk) notificationRequest.launch(Manifest.permission.POST_NOTIFICATIONS) else vm.save(onStarted)
+    }
 
     val requestLocation = rememberLocationRequest(onGranted = vm::fetchLocation, onDenied = vm::markLocationDenied)
     LaunchedEffect(Unit) {
@@ -105,7 +123,7 @@ fun TripScreen(
                 ) {
                     when {
                         vm.isNew -> Button(
-                            onClick = { vm.save(onStarted) },
+                            onClick = startTrip,
                             modifier = Modifier.weight(1f).testTag("trip_start"),
                         ) { Text(stringResource(R.string.start_fishing)) }
                         s.endTime == null -> {
@@ -170,6 +188,8 @@ fun TripScreen(
                     )
                     null -> Unit
                 }
+
+                RouteSection(points = route, catches = catches, active = s.endTime == null)
             }
 
             OutlinedTextField(

@@ -80,4 +80,12 @@
     <string name="fish_time_out_of_trip">Czas ryby musi mieścić się w czasie wyprawy: %1$s – %2$s</string>
     <string name="trip_end_before_start">Koniec wyprawy nie może być przed początkiem</string>
     <string name="trip_must_cover_catches">Wyprawa musi obejmować czas wszystkich ryb: %1$s – %2$s</string>
+    <string name="section_route">Trasa</string>
+    <string name="route_distance">Przebyto: %1$s</string>
+    <string name="distance_m">%1$d m</string>
+    <string name="distance_km">%1$s km</string>
+    <string name="route_recording">Nagrywam trasę</string>
+    <string name="route_waiting">Trasa jest nagrywana. Pojawi się, gdy zaczniesz się przemieszczać.</string>
+    <string name="route_none">Brak nagranej trasy</string>
+    <string name="route_channel">Nagrywanie trasy</string>
 </resources>

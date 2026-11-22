@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Small white fish for the status bar. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M2,12C4.5,7.5 9,6 12.5,6C16.5,6 19,8.5 20,12C19,15.5 16.5,18 12.5,18C9,18 4.5,16.5 2,12ZM20,12L23,8.5V15.5ZM15.5,10.5A1,1 0 1,0 15.5,12.5A1,1 0 1,0 15.5,10.5Z" />
+</vector>

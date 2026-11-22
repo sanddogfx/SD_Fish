@@ -4,6 +4,8 @@
 # installed and its screenshots folder can be pulled afterwards.
 set -u
 adb emu geo fix 21.0122 52.2297   # Warsaw, so the app gets a GPS fix
+# The slow CI emulator often shows "Pixel Launcher isn't responding" over the app; hide such dialogs.
+adb shell settings put global hide_error_dialogs 1
 ./gradlew --no-daemon installDebug installDebugAndroidTest || exit 1
 adb shell am instrument -w com.sdfish.app.test/androidx.test.runner.AndroidJUnitRunner | tee instrument.log
 mkdir -p screenshots

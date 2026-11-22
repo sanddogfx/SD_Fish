@@ -82,4 +82,12 @@
     <string name="fish_time_out_of_trip">The fish must be caught during its trip: %1$s – %2$s</string>
     <string name="trip_end_before_start">The end of the trip can\'t be before its start</string>
     <string name="trip_must_cover_catches">The trip must include all its fish: %1$s – %2$s</string>
+    <string name="section_route">Route</string>
+    <string name="route_distance">Distance covered: %1$s</string>
+    <string name="distance_m">%1$d m</string>
+    <string name="distance_km">%1$s km</string>
+    <string name="route_recording">Recording the route</string>
+    <string name="route_waiting">The route is being recorded. It appears once you move.</string>
+    <string name="route_none">No route recorded</string>
+    <string name="route_channel">Route recording</string>
 </resources>

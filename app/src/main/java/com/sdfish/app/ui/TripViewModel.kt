@@ -12,7 +12,9 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sdfish.app.SdFishApp
 import com.sdfish.app.data.CatchEntry
 import com.sdfish.app.data.FishingTrip
+import com.sdfish.app.data.TrackPoint
 import com.sdfish.app.fetchCurrentLocation
+import com.sdfish.app.route.RouteService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -49,6 +51,9 @@ class TripViewModel(app: Application, private val tripId: Long) : AndroidViewMod
     var locationRequested = false
 
     val isNew: Boolean get() = tripId == 0L
+
+    val route: Flow<List<TrackPoint>> =
+        if (tripId == 0L) flowOf(emptyList()) else db.trackDao().observeByTrip(tripId)
 
     val catches: Flow<List<CatchEntry>> =
         if (tripId == 0L) flowOf(emptyList()) else db.catchDao().observeByTrip(tripId)
@@ -149,12 +154,15 @@ class TripViewModel(app: Application, private val tripId: Long) : AndroidViewMod
                 return@launch
             }
             val newId = tripDao.upsert(toTrip(endTime))
-            onDone(if (isNew) newId else tripId)
+            val id = if (isNew) newId else tripId
+            if (endTime == null) RouteService.start(getApplication(), id) else if (state.endTime == null) RouteService.stop(getApplication())
+            onDone(id)
         }
     }
 
     fun delete(onDone: () -> Unit) {
         viewModelScope.launch {
+            if (state.endTime == null) RouteService.stop(getApplication())
             tripDao.delete(tripId)
             onDone()
         }
