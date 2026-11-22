@@ -135,6 +135,12 @@ class ScreenshotTour {
         tap("tab_trips")
         shot("11_trip_list")
 
+        // Enter a trip that already happened: start and end are picked, no timer.
+        tap("add_past_trip")
+        shot("11a_past_trip", settleMs = 4000)
+        tap("trip_add_past")
+        shot("11a2_trip_list_with_past")
+
         // No trip running: adding a fish asks for a trip. Start a new one; the fish form opens right after.
         tap("tab_catches")
         tap("add_catch")

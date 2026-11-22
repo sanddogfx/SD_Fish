@@ -93,4 +93,5 @@
     <string name="change_place">Change place</string>
     <string name="trip_photos">Photos (%1$d)</string>
     <string name="trip_total_weight">Total weight: %1$s kg</string>
+    <string name="add_trip">Add trip</string>
 </resources>

@@ -91,4 +91,5 @@
     <string name="change_place">Змяніць месца</string>
     <string name="trip_photos">Фота (%1$d)</string>
     <string name="trip_total_weight">Агульная вага: %1$s кг</string>
+    <string name="add_trip">Дадаць рыбалку</string>
 </resources>

@@ -96,6 +96,8 @@ fun HomeScreen(
     onStartTrip: () -> Unit,
     /** Starts a new trip and then adds a fish to it. */
     onStartTripForFish: () -> Unit,
+    /** Enters a trip that already happened. */
+    onAddPastTrip: () -> Unit,
     onOpenTrip: (Long) -> Unit,
     onAddFishToTrip: (Long) -> Unit,
 ) {
@@ -176,12 +178,21 @@ fun HomeScreen(
                     icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                     text = { Text(stringResource(R.string.add_catch)) },
                 )
-                else -> ExtendedFloatingActionButton(
-                    onClick = onStartTrip,
-                    modifier = Modifier.testTag("start_trip"),
-                    icon = { Icon(Icons.Filled.PlayArrow, contentDescription = null) },
-                    text = { Text(stringResource(R.string.start_fishing)) },
-                )
+                else -> Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    ExtendedFloatingActionButton(
+                        onClick = onAddPastTrip,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        modifier = Modifier.testTag("add_past_trip"),
+                        icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                        text = { Text(stringResource(R.string.add_trip)) },
+                    )
+                    ExtendedFloatingActionButton(
+                        onClick = onStartTrip,
+                        modifier = Modifier.testTag("start_trip"),
+                        icon = { Icon(Icons.Filled.PlayArrow, contentDescription = null) },
+                        text = { Text(stringResource(R.string.start_fishing)) },
+                    )
+                }
             }
         },
     ) { padding ->

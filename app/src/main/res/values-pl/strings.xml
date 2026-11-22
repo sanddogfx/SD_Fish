@@ -91,4 +91,5 @@
     <string name="change_place">Zmień miejsce</string>
     <string name="trip_photos">Zdjęcia (%1$d)</string>
     <string name="trip_total_weight">Łączna waga: %1$s kg</string>
+    <string name="add_trip">Dodaj wyprawę</string>
 </resources>

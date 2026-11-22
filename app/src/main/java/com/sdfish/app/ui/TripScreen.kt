@@ -62,6 +62,8 @@ import com.sdfish.app.data.CatchEntry
 @Composable
 fun TripScreen(
     tripId: Long,
+    /** For a new trip: enter a trip that already happened instead of starting one now. */
+    isPast: Boolean = false,
     onDone: () -> Unit,
     /** Called instead of [onDone] after a new trip is started. */
     onStarted: (tripId: Long) -> Unit,
@@ -69,7 +71,7 @@ fun TripScreen(
     onOpenCatch: (Long) -> Unit,
 ) {
     val context = LocalContext.current
-    val vm: TripViewModel = viewModel(factory = TripViewModel.factory(tripId))
+    val vm: TripViewModel = viewModel(factory = TripViewModel.factory(tripId, isPast))
     val s = vm.state
     val catches by vm.catches.collectAsStateWithLifecycle(initialValue = emptyList())
     val route by vm.route.collectAsStateWithLifecycle(initialValue = emptyList())
@@ -123,6 +125,10 @@ fun TripScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     when {
+                        vm.isNew && vm.isPast -> Button(
+                            onClick = { vm.save(onStarted) },
+                            modifier = Modifier.weight(1f).testTag("trip_add_past"),
+                        ) { Text(stringResource(R.string.add_trip)) }
                         vm.isNew -> Button(
                             onClick = startTrip,
                             modifier = Modifier.weight(1f).testTag("trip_start"),
@@ -168,7 +174,7 @@ fun TripScreen(
                 startLocked = !vm.isNew,
             )
 
-            if (!vm.isNew) {
+            if (!vm.isNew || vm.isPast) {
                 SectionTitle(stringResource(R.string.section_time))
                 TimeRow(stringResource(R.string.trip_started), s.startTime) { t ->
                     pickDateTime(context, s.startTime, vm::setStart)
@@ -190,7 +196,9 @@ fun TripScreen(
                     )
                     null -> Unit
                 }
+            }
 
+            if (!vm.isNew) {
                 RouteSection(points = route, catches = catches, active = s.endTime == null)
 
                 TripPhotosSection(
