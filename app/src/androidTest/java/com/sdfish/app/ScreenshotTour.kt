@@ -129,6 +129,8 @@ class ScreenshotTour {
         shot("10b_trip_route", settleMs = 5000)
         compose.onNodeWithTag("trip_photos").performScrollTo()
         shot("10c_trip_photos")
+        compose.onNodeWithTag("trip_total_weight").performScrollTo()
+        shot("10d_trip_weight")
         tap("trip_finish")
         tap("tab_trips")
         shot("11_trip_list")
