@@ -88,4 +88,5 @@
     <string name="route_waiting">Trasa jest nagrywana. Pojawi się, gdy zaczniesz się przemieszczać.</string>
     <string name="route_none">Brak nagranej trasy</string>
     <string name="route_channel">Nagrywanie trasy</string>
+    <string name="change_place">Zmień miejsce</string>
 </resources>

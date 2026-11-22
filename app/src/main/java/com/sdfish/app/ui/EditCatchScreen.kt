@@ -240,6 +240,8 @@ fun EditCatchScreen(catchId: Long, newInTripId: Long, onDone: () -> Unit) {
                 recenterToken = s.recenterToken,
                 onPick = vm::setPosition,
                 onRequestLocation = requestLocation,
+                // A saved fish, or a fish that takes its place from the trip.
+                startLocked = !isNew || newInTripId != 0L,
             )
 
             // --- Note ---

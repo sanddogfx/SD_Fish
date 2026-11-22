@@ -88,4 +88,5 @@
     <string name="route_waiting">Маршрут записывается. Он появится, когда ты начнёшь двигаться.</string>
     <string name="route_none">Маршрут не записан</string>
     <string name="route_channel">Запись маршрута</string>
+    <string name="change_place">Изменить место</string>
 </resources>
