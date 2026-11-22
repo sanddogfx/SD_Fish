@@ -1,6 +1,5 @@
 package com.sdfish.app.ui
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.net.Uri
 import androidx.compose.runtime.getValue
@@ -11,20 +10,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.CancellationTokenSource
 import com.sdfish.app.Formats
 import com.sdfish.app.PhotoStorage
 import com.sdfish.app.SdFishApp
+import com.sdfish.app.fetchCurrentLocation
 import com.sdfish.app.data.CatchEntry
 import com.sdfish.app.data.SpeciesCatalog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-
-enum class LocationStatus { Idle, Locating, Failed, Denied }
 
 data class EditState(
     val timestamp: Long = System.currentTimeMillis(),
@@ -36,14 +30,24 @@ data class EditState(
     val lengthText: String = "",
     val photoPath: String? = null,
     val note: String = "",
+    val method: String? = null,
+    val tripId: Long? = null,
+    /** Start time of the trip this fish belongs to, for display. */
+    val tripStart: Long? = null,
     val locationStatus: LocationStatus = LocationStatus.Idle,
     /** Changes whenever the map should jump to the current point. */
     val recenterToken: Int = 0,
 )
 
-class EditCatchViewModel(app: Application, private val catchId: Long) : AndroidViewModel(app) {
+class EditCatchViewModel(
+    app: Application,
+    private val catchId: Long,
+    /** For a new fish added during a trip: take place and method from that trip. */
+    private val newInTripId: Long,
+) : AndroidViewModel(app) {
 
     private val dao = (app as SdFishApp).database.catchDao()
+    private val tripDao = (app as SdFishApp).database.tripDao()
     private var originalPhotoPath: String? = null
 
     var state by mutableStateOf(EditState())
@@ -52,7 +56,24 @@ class EditCatchViewModel(app: Application, private val catchId: Long) : AndroidV
     /** Set once the automatic location request for a new catch has been made. */
     var locationRequested = false
 
+    /** A new fish outside a trip gets its place from GPS automatically. */
+    val wantsAutoLocation: Boolean get() = catchId == 0L && newInTripId == 0L
+
     init {
+        if (catchId == 0L && newInTripId != 0L) {
+            viewModelScope.launch {
+                tripDao.getById(newInTripId)?.let { t ->
+                    state = state.copy(
+                        latitude = t.latitude,
+                        longitude = t.longitude,
+                        method = t.method,
+                        tripId = t.id,
+                        tripStart = t.startTime,
+                        recenterToken = state.recenterToken + 1,
+                    )
+                }
+            }
+        }
         if (catchId != 0L) {
             viewModelScope.launch {
                 dao.getById(catchId)?.let { e ->
@@ -67,6 +88,9 @@ class EditCatchViewModel(app: Application, private val catchId: Long) : AndroidV
                         lengthText = Formats.number(e.lengthCm),
                         photoPath = e.photoPath,
                         note = e.note,
+                        method = e.method,
+                        tripId = e.tripId,
+                        tripStart = e.tripId?.let { id -> tripDao.getById(id)?.startTime },
                         recenterToken = 1,
                     )
                 }
@@ -87,17 +111,10 @@ class EditCatchViewModel(app: Application, private val catchId: Long) : AndroidV
         state = state.copy(locationStatus = LocationStatus.Denied)
     }
 
-    @SuppressLint("MissingPermission") // The screen checks the permission before calling.
     fun fetchLocation() {
         state = state.copy(locationStatus = LocationStatus.Locating)
         viewModelScope.launch {
-            val client = LocationServices.getFusedLocationProviderClient(getApplication<Application>())
-            val location = try {
-                client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token).await()
-                    ?: client.lastLocation.await()
-            } catch (e: Exception) {
-                null
-            }
+            val location = fetchCurrentLocation(getApplication())
             state = if (location != null) {
                 state.copy(
                     latitude = location.latitude,
@@ -137,6 +154,8 @@ class EditCatchViewModel(app: Application, private val catchId: Long) : AndroidV
         lengthCm = Formats.parseNumber(state.lengthText),
         photoPath = state.photoPath,
         note = state.note.trim(),
+        tripId = state.tripId,
+        method = state.method,
     )
 
     fun save(onSaved: () -> Unit) {
@@ -161,9 +180,9 @@ class EditCatchViewModel(app: Application, private val catchId: Long) : AndroidV
     }
 
     companion object {
-        fun factory(catchId: Long): ViewModelProvider.Factory = viewModelFactory {
+        fun factory(catchId: Long, newInTripId: Long): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                EditCatchViewModel(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!, catchId)
+                EditCatchViewModel(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]!!, catchId, newInTripId)
             }
         }
     }

@@ -11,6 +11,9 @@ interface CatchDao {
     @Query("SELECT * FROM catches ORDER BY timestamp DESC")
     fun observeAll(): Flow<List<CatchEntry>>
 
+    @Query("SELECT * FROM catches WHERE tripId = :tripId ORDER BY timestamp DESC")
+    fun observeByTrip(tripId: Long): Flow<List<CatchEntry>>
+
     @Query("SELECT * FROM catches WHERE id = :id")
     suspend fun getById(id: Long): CatchEntry?
 

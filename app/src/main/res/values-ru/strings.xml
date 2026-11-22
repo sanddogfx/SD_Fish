@@ -52,4 +52,26 @@
     <string name="language">Язык</string>
     <string name="language_system">Как в системе</string>
     <string name="close">Закрыть</string>
+
+    <string name="tab_trips">Рыбалки</string>
+    <string name="start_fishing">Начать рыбалку</string>
+    <string name="add_fish">Добавить рыбу</string>
+    <string name="end_fishing">Завершить</string>
+    <string name="active_trip">Идёт рыбалка</string>
+    <string name="trip_title_new">Новая рыбалка</string>
+    <string name="trip_title">Рыбалка</string>
+    <string name="section_method">Способ ловли</string>
+    <string name="section_place_only">Место</string>
+    <string name="section_time">Время</string>
+    <string name="trip_started">Начало</string>
+    <string name="trip_ended">Конец</string>
+    <string name="trip_duration">Длительность: %1$s</string>
+    <string name="trip_in_progress">идёт</string>
+    <string name="trip_catches">Улов (%1$d)</string>
+    <string name="trip_no_catches">Пока без рыбы</string>
+    <string name="trips_empty">Рыбалок пока нет.\nНажми «Начать рыбалку», когда придёшь на водоём.</string>
+    <string name="fish_count">рыб: %1$d</string>
+    <string name="delete_trip_title">Удалить рыбалку?</string>
+    <string name="delete_trip_text">Рыба с этой рыбалки останется в списке уловов.</string>
+    <string name="from_trip">Рыбалка от %1$s</string>
 </resources>

@@ -54,4 +54,26 @@
     <string name="language">Language</string>
     <string name="language_system">System default</string>
     <string name="close">Close</string>
+
+    <string name="tab_trips">Trips</string>
+    <string name="start_fishing">Start fishing</string>
+    <string name="add_fish">Add fish</string>
+    <string name="end_fishing">End</string>
+    <string name="active_trip">Fishing now</string>
+    <string name="trip_title_new">New trip</string>
+    <string name="trip_title">Trip</string>
+    <string name="section_method">Fishing method</string>
+    <string name="section_place_only">Place</string>
+    <string name="section_time">Time</string>
+    <string name="trip_started">Start</string>
+    <string name="trip_ended">End</string>
+    <string name="trip_duration">Duration: %1$s</string>
+    <string name="trip_in_progress">in progress</string>
+    <string name="trip_catches">Catch (%1$d)</string>
+    <string name="trip_no_catches">No fish yet</string>
+    <string name="trips_empty">No trips yet.\nTap “Start fishing” when you get to the water.</string>
+    <string name="fish_count">fish: %1$d</string>
+    <string name="delete_trip_title">Delete this trip?</string>
+    <string name="delete_trip_text">Its fish stay in the catch list.</string>
+    <string name="from_trip">Trip from %1$s</string>
 </resources>

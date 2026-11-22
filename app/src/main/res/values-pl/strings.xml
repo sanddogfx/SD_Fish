@@ -52,4 +52,26 @@
     <string name="language">Język</string>
     <string name="language_system">Jak w systemie</string>
     <string name="close">Zamknij</string>
+
+    <string name="tab_trips">Wyprawy</string>
+    <string name="start_fishing">Zacznij łowić</string>
+    <string name="add_fish">Dodaj rybę</string>
+    <string name="end_fishing">Zakończ</string>
+    <string name="active_trip">Trwa wyprawa</string>
+    <string name="trip_title_new">Nowa wyprawa</string>
+    <string name="trip_title">Wyprawa</string>
+    <string name="section_method">Metoda połowu</string>
+    <string name="section_place_only">Miejsce</string>
+    <string name="section_time">Czas</string>
+    <string name="trip_started">Początek</string>
+    <string name="trip_ended">Koniec</string>
+    <string name="trip_duration">Czas trwania: %1$s</string>
+    <string name="trip_in_progress">trwa</string>
+    <string name="trip_catches">Połów (%1$d)</string>
+    <string name="trip_no_catches">Na razie bez ryb</string>
+    <string name="trips_empty">Nie masz jeszcze wypraw.\nNaciśnij „Zacznij łowić”, gdy dotrzesz nad wodę.</string>
+    <string name="fish_count">ryb: %1$d</string>
+    <string name="delete_trip_title">Usunąć wyprawę?</string>
+    <string name="delete_trip_text">Ryby z tej wyprawy zostaną na liście połowów.</string>
+    <string name="from_trip">Wyprawa z %1$s</string>
 </resources>

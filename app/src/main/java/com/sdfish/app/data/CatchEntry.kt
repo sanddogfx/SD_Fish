@@ -19,4 +19,8 @@ data class CatchEntry(
     /** Absolute path of the photo in app storage. */
     val photoPath: String?,
     val note: String,
+    /** The [FishingTrip] this fish was caught on, if any. */
+    val tripId: Long? = null,
+    /** A [FishingMethod.id], if known. */
+    val method: String? = null,
 )
