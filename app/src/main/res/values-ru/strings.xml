@@ -74,4 +74,5 @@
     <string name="delete_trip_title">Удалить рыбалку?</string>
     <string name="delete_trip_text">Рыба с этой рыбалки останется в списке уловов.</string>
     <string name="from_trip">Рыбалка от %1$s</string>
+    <string name="method_not_set">Не указан</string>
 </resources>

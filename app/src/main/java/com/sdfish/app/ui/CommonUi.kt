@@ -7,8 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.FilterChip
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -191,19 +195,46 @@ private fun LocationPicker(latitude: Double?, longitude: Double?, recenterToken:
     )
 }
 
-/** Chips for picking a fishing method. With [allowNone], tapping the selected chip clears it. */
-@OptIn(ExperimentalLayoutApi::class)
+/** Drop-down list for picking a fishing method. With [allowNone], "not set" is also offered. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MethodPicker(selected: String?, allowNone: Boolean, onSelect: (String?) -> Unit) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        FishingMethods.all.forEach { method ->
-            val isSelected = method.id == selected
-            FilterChip(
-                selected = isSelected,
-                onClick = { onSelect(if (isSelected && allowNone) null else method.id) },
-                label = { Text(method.displayName()) },
-                modifier = Modifier.testTag("method_${method.id}"),
-            )
+    var expanded by remember { mutableStateOf(false) }
+    val notSet = stringResource(R.string.method_not_set)
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
+        OutlinedTextField(
+            value = if (selected == null) notSet else FishingMethods.displayName(selected),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(stringResource(R.string.section_method)) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            singleLine = true,
+            modifier = Modifier
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                .fillMaxWidth()
+                .testTag("method"),
+        )
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            if (allowNone) {
+                DropdownMenuItem(
+                    text = { Text(notSet) },
+                    modifier = Modifier.testTag("method_none"),
+                    onClick = {
+                        onSelect(null)
+                        expanded = false
+                    },
+                )
+            }
+            FishingMethods.all.forEach { method ->
+                DropdownMenuItem(
+                    text = { Text(method.displayName()) },
+                    modifier = Modifier.testTag("method_${method.id}"),
+                    onClick = {
+                        onSelect(method.id)
+                        expanded = false
+                    },
+                )
+            }
         }
     }
 }
