@@ -32,6 +32,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.rememberCoroutineScope
 import com.sdfish.app.data.FishingMethods
 import com.sdfish.app.data.FishingTrip
+import com.sdfish.app.data.Deletion
 import com.sdfish.app.data.TripWithCount
 import kotlinx.coroutines.launch
 import androidx.compose.material3.AlertDialog
@@ -118,6 +119,8 @@ fun HomeScreen(
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var showSettings by rememberSaveable { mutableStateOf(false) }
     var chooseTrip by rememberSaveable { mutableStateOf(false) }
+    var tripToDelete by remember { mutableStateOf<FishingTrip?>(null) }
+    var catchToDelete by remember { mutableStateOf<CatchEntry?>(null) }
 
     // Keep recording the route of a running trip, also after the phone restarted the app.
     val activeId = activeTrip?.id
@@ -236,8 +239,8 @@ fun HomeScreen(
                 val tripList = trips
                 when {
                     list == null || tripList == null -> Unit
-                    tab == 0 -> TripList(tripList, onOpenTrip)
-                    tab == 1 -> CatchList(list, onOpen)
+                    tab == 0 -> TripList(tripList, onOpenTrip, onDelete = { tripToDelete = it })
+                    tab == 1 -> CatchList(list, onOpen, onDelete = { catchToDelete = it })
                     else -> CatchMap(list, onOpen)
                 }
             }
@@ -245,6 +248,29 @@ fun HomeScreen(
     }
 
     if (showSettings) SettingsDialog(onDismiss = { showSettings = false })
+    tripToDelete?.let { trip ->
+        ConfirmDeleteDialog(
+            title = stringResource(R.string.delete_trip_title),
+            text = stringResource(R.string.delete_trip_text),
+            onConfirm = {
+                tripToDelete = null
+                if (trip.isActive) RouteService.stop(context)
+                scope.launch { Deletion.deleteTrip(db, trip.id) }
+            },
+            onDismiss = { tripToDelete = null },
+        )
+    }
+    catchToDelete?.let { entry ->
+        ConfirmDeleteDialog(
+            title = stringResource(R.string.delete_confirm_title),
+            text = stringResource(R.string.delete_confirm_text),
+            onConfirm = {
+                catchToDelete = null
+                scope.launch { Deletion.deleteCatch(db, entry) }
+            },
+            onDismiss = { catchToDelete = null },
+        )
+    }
     if (chooseTrip) {
         ChooseTripDialog(
             trips = trips.orEmpty().map { it.trip },
@@ -396,7 +422,7 @@ private fun ActiveTripCard(trip: FishingTrip, onOpen: () -> Unit, onFinish: () -
 }
 
 @Composable
-private fun TripList(trips: List<TripWithCount>, onOpen: (Long) -> Unit) {
+private fun TripList(trips: List<TripWithCount>, onOpen: (Long) -> Unit, onDelete: (FishingTrip) -> Unit) {
     if (trips.isEmpty()) {
         Box(Modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center) {
             Text(
@@ -412,7 +438,13 @@ private fun TripList(trips: List<TripWithCount>, onOpen: (Long) -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(trips, key = { it.trip.id }) { item ->
-            TripCard(item, onClick = { onOpen(item.trip.id) })
+            SwipeActions(
+                onEdit = { onOpen(item.trip.id) },
+                onDelete = { onDelete(item.trip) },
+                modifier = Modifier.testTag("swipe_trip_${item.trip.id}"),
+            ) {
+                TripCard(item, onClick = { onOpen(item.trip.id) })
+            }
         }
     }
 }
@@ -449,7 +481,7 @@ fun speciesLabel(entry: CatchEntry): String =
     else SpeciesCatalog.displayName(entry.species)
 
 @Composable
-private fun CatchList(catches: List<CatchEntry>, onOpen: (Long) -> Unit) {
+private fun CatchList(catches: List<CatchEntry>, onOpen: (Long) -> Unit, onDelete: (CatchEntry) -> Unit) {
     if (catches.isEmpty()) {
         Box(Modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center) {
             Text(
@@ -465,7 +497,13 @@ private fun CatchList(catches: List<CatchEntry>, onOpen: (Long) -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(catches, key = { it.id }) { entry ->
-            CatchCard(entry, onClick = { onOpen(entry.id) })
+            SwipeActions(
+                onEdit = { onOpen(entry.id) },
+                onDelete = { onDelete(entry) },
+                modifier = Modifier.testTag("swipe_catch_${entry.id}"),
+            ) {
+                CatchCard(entry, onClick = { onOpen(entry.id) })
+            }
         }
     }
 }
