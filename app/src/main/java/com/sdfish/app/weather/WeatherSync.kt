@@ -74,6 +74,8 @@ object WeatherSync {
         val conn = (URL(url).openConnection() as HttpURLConnection).apply {
             connectTimeout = 10_000
             readTimeout = 15_000
+            setRequestProperty("User-Agent", "LoopcastFishing/${com.sdfish.app.BuildConfig.VERSION_NAME} (Android)")
+            setRequestProperty("Accept", "application/json")
         }
         try {
             if (conn.responseCode != HttpURLConnection.HTTP_OK) {
