@@ -40,6 +40,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -325,6 +326,9 @@ fun CatchThumbnail(entry: com.sdfish.app.data.CatchEntry, size: androidx.compose
     }
 }
 
+/** How far (part of the card width) a swipe must go to count. */
+private const val SWIPE_FRACTION = 0.4f
+
 /**
  * A list item that can be swiped: left to right opens it for editing,
  * right to left asks to delete it. The item springs back either way.
@@ -334,8 +338,15 @@ fun CatchThumbnail(entry: com.sdfish.app.data.CatchEntry, size: androidx.compose
 fun SwipeActions(onEdit: () -> Unit, onDelete: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val edit by rememberUpdatedState(onEdit)
     val delete by rememberUpdatedState(onDelete)
+    // Act only on a deliberate swipe: the card must be dragged across a large part
+    // of its width. A short quick flick (often a sloppy vertical scroll) does nothing.
+    var width by remember { androidx.compose.runtime.mutableFloatStateOf(0f) }
+    val holder = remember { arrayOfNulls<androidx.compose.material3.SwipeToDismissBoxState>(1) }
     val state = androidx.compose.material3.rememberSwipeToDismissBoxState(
+        positionalThreshold = { total -> total * SWIPE_FRACTION },
         confirmValueChange = { value ->
+            val dragged = holder[0]?.let { runCatching { kotlin.math.abs(it.requireOffset()) }.getOrNull() } ?: 0f
+            if (value != androidx.compose.material3.SwipeToDismissBoxValue.Settled && width > 0f && dragged < width * SWIPE_FRACTION) return@rememberSwipeToDismissBoxState false
             when (value) {
                 androidx.compose.material3.SwipeToDismissBoxValue.StartToEnd -> edit()
                 androidx.compose.material3.SwipeToDismissBoxValue.EndToStart -> delete()
@@ -344,9 +355,10 @@ fun SwipeActions(onEdit: () -> Unit, onDelete: () -> Unit, modifier: Modifier = 
             false
         },
     )
+    holder[0] = state
     androidx.compose.material3.SwipeToDismissBox(
         state = state,
-        modifier = modifier,
+        modifier = modifier.onSizeChanged { width = it.width.toFloat() },
         backgroundContent = {
             val toDelete = state.dismissDirection == androidx.compose.material3.SwipeToDismissBoxValue.EndToStart
             val toEdit = state.dismissDirection == androidx.compose.material3.SwipeToDismissBoxValue.StartToEnd
