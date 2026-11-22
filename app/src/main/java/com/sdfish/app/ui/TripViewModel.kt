@@ -27,7 +27,16 @@ data class TripState(
     val note: String = "",
     val locationStatus: LocationStatus = LocationStatus.Idle,
     val recenterToken: Int = 0,
+    val timeError: TripTimeError? = null,
 )
+
+/** Why Save was refused because of the trip times. */
+sealed interface TripTimeError {
+    data object EndBeforeStart : TripTimeError
+
+    /** Fish of this trip were caught between [first] and [last]; the trip must cover that span. */
+    data class OutsideCatches(val first: Long, val last: Long) : TripTimeError
+}
 
 class TripViewModel(app: Application, private val tripId: Long) : AndroidViewModel(app) {
 
@@ -66,6 +75,31 @@ class TripViewModel(app: Application, private val tripId: Long) : AndroidViewMod
         state = transform(state)
     }
 
+    fun setStart(time: Long) {
+        state = state.copy(startTime = time, timeError = null)
+    }
+
+    fun setEnd(time: Long) {
+        state = state.copy(endTime = time, timeError = null)
+    }
+
+    /** Checks that the trip times are in order and cover all its fish. Times are compared to the minute. */
+    private suspend fun checkTimes(endTime: Long?): TripTimeError? {
+        if (isNew) return null
+        val start = state.startTime / 60_000
+        val end = endTime?.let { it / 60_000 }
+        if (end != null && end < start) return TripTimeError.EndBeforeStart
+        val times = db.catchDao().timesInTrip(tripId)
+        if (times.isEmpty()) return null
+        val first = times.min()
+        val last = times.max()
+        return if (first / 60_000 < start || (end != null && last / 60_000 > end)) {
+            TripTimeError.OutsideCatches(first, last)
+        } else {
+            null
+        }
+    }
+
     fun setPosition(lat: Double, lon: Double) {
         state = state.copy(latitude = lat, longitude = lon, accuracy = null, locationStatus = LocationStatus.Idle)
     }
@@ -102,18 +136,20 @@ class TripViewModel(app: Application, private val tripId: Long) : AndroidViewMod
         note = state.note.trim(),
     )
 
-    /** Starts a new trip, or saves changes to an existing one. */
-    fun save(onDone: () -> Unit) {
-        viewModelScope.launch {
-            tripDao.upsert(toTrip(state.endTime))
-            onDone()
-        }
-    }
+    /** Starts a new trip, or saves changes to an existing one. [onDone] gets the trip id. */
+    fun save(onDone: (Long) -> Unit) = store(state.endTime, onDone)
 
-    fun finish(onDone: () -> Unit) {
+    fun finish(onDone: (Long) -> Unit) = store(System.currentTimeMillis(), onDone)
+
+    private fun store(endTime: Long?, onDone: (Long) -> Unit) {
         viewModelScope.launch {
-            tripDao.upsert(toTrip(System.currentTimeMillis()))
-            onDone()
+            val error = checkTimes(endTime)
+            if (error != null) {
+                state = state.copy(timeError = error)
+                return@launch
+            }
+            val newId = tripDao.upsert(toTrip(endTime))
+            onDone(if (isNew) newId else tripId)
         }
     }
 

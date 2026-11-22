@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,9 +90,10 @@ import java.io.File
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onAdd: () -> Unit,
     onOpen: (Long) -> Unit,
     onStartTrip: () -> Unit,
+    /** Starts a new trip and then adds a fish to it. */
+    onStartTripForFish: () -> Unit,
     onOpenTrip: (Long) -> Unit,
     onAddFishToTrip: (Long) -> Unit,
 ) {
@@ -103,6 +108,7 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     var tab by rememberSaveable { mutableIntStateOf(0) }
     var showSettings by rememberSaveable { mutableStateOf(false) }
+    var chooseTrip by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -156,7 +162,8 @@ fun HomeScreen(
                     text = { Text(stringResource(R.string.add_fish)) },
                 )
                 tab == 1 -> ExtendedFloatingActionButton(
-                    onClick = onAdd,
+                    // Every fish belongs to a trip: ask which one, or start a new one.
+                    onClick = { chooseTrip = true },
                     modifier = Modifier.testTag("add_catch"),
                     icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                     text = { Text(stringResource(R.string.add_catch)) },
@@ -195,7 +202,61 @@ fun HomeScreen(
     }
 
     if (showSettings) SettingsDialog(onDismiss = { showSettings = false })
+    if (chooseTrip) {
+        ChooseTripDialog(
+            trips = trips.orEmpty().map { it.trip },
+            onNewTrip = { chooseTrip = false; onStartTripForFish() },
+            onPick = { id -> chooseTrip = false; onAddFishToTrip(id) },
+            onDismiss = { chooseTrip = false },
+        )
+    }
 }
+
+/** Asks which trip a new fish belongs to: a new trip or one of the recent ones. */
+@Composable
+private fun ChooseTripDialog(
+    trips: List<FishingTrip>,
+    onNewTrip: () -> Unit,
+    onPick: (Long) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.choose_trip_title)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState())) {
+                Button(onClick = onNewTrip, modifier = Modifier.fillMaxWidth().testTag("choose_new_trip")) {
+                    Icon(Icons.Filled.PlayArrow, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.trip_title_new))
+                }
+                if (trips.isNotEmpty()) {
+                    Spacer(Modifier.height(16.dp))
+                    Text(stringResource(R.string.choose_trip_existing), style = MaterialTheme.typography.titleSmall)
+                    trips.take(RECENT_TRIPS).forEach { trip ->
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .testTag("choose_trip_${trip.id}")
+                                .clickable { onPick(trip.id) }
+                                .padding(vertical = 10.dp),
+                        ) {
+                            Text(Formats.dateTime(trip.startTime), style = MaterialTheme.typography.bodyLarge)
+                            Text(
+                                FishingMethods.displayName(trip.method),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
+}
+
+private const val RECENT_TRIPS = 10
 
 /** App settings. For now only the language. */
 @Composable

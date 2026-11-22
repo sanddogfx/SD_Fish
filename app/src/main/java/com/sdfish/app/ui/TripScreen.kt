@@ -56,6 +56,8 @@ import com.sdfish.app.data.CatchEntry
 fun TripScreen(
     tripId: Long,
     onDone: () -> Unit,
+    /** Called instead of [onDone] after a new trip is started. */
+    onStarted: (tripId: Long) -> Unit,
     onAddFish: (tripId: Long) -> Unit,
     onOpenCatch: (Long) -> Unit,
 ) {
@@ -103,20 +105,20 @@ fun TripScreen(
                 ) {
                     when {
                         vm.isNew -> Button(
-                            onClick = { vm.save(onDone) },
+                            onClick = { vm.save(onStarted) },
                             modifier = Modifier.weight(1f).testTag("trip_start"),
                         ) { Text(stringResource(R.string.start_fishing)) }
                         s.endTime == null -> {
-                            OutlinedButton(onClick = { vm.save(onDone) }, modifier = Modifier.weight(1f)) {
+                            OutlinedButton(onClick = { vm.save { onDone() } }, modifier = Modifier.weight(1f)) {
                                 Text(stringResource(R.string.save))
                             }
                             Button(
-                                onClick = { vm.finish(onDone) },
+                                onClick = { vm.finish { onDone() } },
                                 modifier = Modifier.weight(1f).testTag("trip_finish"),
                             ) { Text(stringResource(R.string.end_fishing)) }
                         }
                         else -> Button(
-                            onClick = { vm.save(onDone) },
+                            onClick = { vm.save { onDone() } },
                             modifier = Modifier.weight(1f).testTag("trip_save"),
                         ) { Text(stringResource(R.string.save)) }
                     }
@@ -149,18 +151,25 @@ fun TripScreen(
             if (!vm.isNew) {
                 SectionTitle(stringResource(R.string.section_time))
                 TimeRow(stringResource(R.string.trip_started), s.startTime) { t ->
-                    pickDateTime(context, s.startTime) { picked -> vm.update { it.copy(startTime = picked) } }
+                    pickDateTime(context, s.startTime, vm::setStart)
                 }
                 val end = s.endTime
                 if (end != null) {
                     TimeRow(stringResource(R.string.trip_ended), end) {
-                        pickDateTime(context, end) { picked -> vm.update { it.copy(endTime = picked) } }
+                        pickDateTime(context, end, vm::setEnd)
                     }
                 }
                 Text(
                     stringResource(R.string.trip_duration, rememberElapsed(s.startTime, s.endTime)),
                     style = MaterialTheme.typography.bodyLarge,
                 )
+                when (val error = s.timeError) {
+                    TripTimeError.EndBeforeStart -> ErrorText(stringResource(R.string.trip_end_before_start))
+                    is TripTimeError.OutsideCatches -> ErrorText(
+                        stringResource(R.string.trip_must_cover_catches, Formats.dateTime(error.first), Formats.dateTime(error.last))
+                    )
+                    null -> Unit
+                }
             }
 
             OutlinedTextField(

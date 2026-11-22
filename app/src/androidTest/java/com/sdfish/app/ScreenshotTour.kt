@@ -90,6 +90,17 @@ class ScreenshotTour {
         tap("tab_trips")
         shot("11_trip_list")
 
+        // No trip running: adding a fish asks for a trip. Start a new one; the fish form opens right after.
+        tap("tab_catches")
+        tap("add_catch")
+        shot("11b_choose_trip")
+        tap("choose_new_trip")
+        tap("trip_start")
+        shot("11c_fish_after_new_trip", settleMs = 4000)
+        tap("save")
+        tap("active_trip")
+        tap("trip_finish")
+
         tap("tab_map")
         shot("12_map", settleMs = 6000)
 

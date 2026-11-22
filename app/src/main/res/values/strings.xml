@@ -77,4 +77,9 @@
     <string name="delete_trip_text">Its fish stay in the catch list.</string>
     <string name="from_trip">Trip from %1$s</string>
     <string name="method_not_set">Not set</string>
+    <string name="choose_trip_title">Where to add the fish?</string>
+    <string name="choose_trip_existing">Or to an earlier trip:</string>
+    <string name="fish_time_out_of_trip">The fish must be caught during its trip: %1$s – %2$s</string>
+    <string name="trip_end_before_start">The end of the trip can\'t be before its start</string>
+    <string name="trip_must_cover_catches">The trip must include all its fish: %1$s – %2$s</string>
 </resources>
