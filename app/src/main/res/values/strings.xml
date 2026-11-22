@@ -41,4 +41,11 @@
     <string name="no_camera">Не найдено приложение камеры</string>
 
     <string name="note_label">Заметка: приманка, глубина, погода…</string>
+
+    <string name="update_available">Доступна новая версия 0.1.%1$d</string>
+    <string name="update_downloading">Скачиваю…</string>
+    <string name="update_failed">Не удалось скачать. Проверь интернет и попробуй ещё раз.</string>
+    <string name="update_later">Позже</string>
+    <string name="update_now">Обновить</string>
+    <string name="update_allow_install">Разреши установку для SD_Fish, вернись и нажми «Обновить» ещё раз</string>
 </resources>
