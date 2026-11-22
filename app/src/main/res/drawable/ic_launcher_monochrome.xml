@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed icon (Android 13+): the fish only, the eye cut out. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:translateX="55.5"
+        android:translateY="55.5"
+        android:rotation="-20"
+        android:scaleX="0.78"
+        android:scaleY="0.78">
+        <path
+            android:fillColor="#FFFFFF"
+            android:fillType="evenOdd"
+            android:pathData="M-25,0 C-15,-14 10,-16 22,-3 L26,0 L22,3 C10,16 -15,14 -25,0 Z M10,-3 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0 Z" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M-17,-5 L-35,-12 L-30,0 L-35,12 L-17,5 Z" />
+    </group>
+</vector>

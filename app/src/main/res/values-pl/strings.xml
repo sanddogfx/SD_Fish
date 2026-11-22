@@ -92,4 +92,7 @@
     <string name="trip_photos">Zdjęcia (%1$d)</string>
     <string name="trip_total_weight">Łączna waga: %1$s kg</string>
     <string name="add_trip">Dodaj wyprawę</string>
+    <string name="theme">Motyw</string>
+    <string name="theme_dark">Ciemny</string>
+    <string name="theme_light">Jasny</string>
 </resources>
