@@ -59,6 +59,8 @@ class ScreenshotTour {
         // Start a trip: place from GPS, method feeder.
         tap("start_trip")
         shot("02_trip_new", settleMs = 6000)
+        tap("method")
+        shot("02b_method_list")
         tap("method_feeder")
         tap("trip_start")
         shot("03_home_active_trip", settleMs = 3000)

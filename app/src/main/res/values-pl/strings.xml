@@ -74,4 +74,5 @@
     <string name="delete_trip_title">Usunąć wyprawę?</string>
     <string name="delete_trip_text">Ryby z tej wyprawy zostaną na liście połowów.</string>
     <string name="from_trip">Wyprawa z %1$s</string>
+    <string name="method_not_set">Nie podano</string>
 </resources>
