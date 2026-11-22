@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.DropdownMenuItem
@@ -320,4 +323,77 @@ fun CatchThumbnail(entry: com.sdfish.app.data.CatchEntry, size: androidx.compose
             contentAlignment = Alignment.Center,
         ) { Text("🐟", fontSize = (size.value * 0.44f).sp) }
     }
+}
+
+/**
+ * A list item that can be swiped: left to right opens it for editing,
+ * right to left asks to delete it. The item springs back either way.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeActions(onEdit: () -> Unit, onDelete: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val edit by rememberUpdatedState(onEdit)
+    val delete by rememberUpdatedState(onDelete)
+    val state = androidx.compose.material3.rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            when (value) {
+                androidx.compose.material3.SwipeToDismissBoxValue.StartToEnd -> edit()
+                androidx.compose.material3.SwipeToDismissBoxValue.EndToStart -> delete()
+                androidx.compose.material3.SwipeToDismissBoxValue.Settled -> Unit
+            }
+            false
+        },
+    )
+    androidx.compose.material3.SwipeToDismissBox(
+        state = state,
+        modifier = modifier,
+        backgroundContent = {
+            val toDelete = state.dismissDirection == androidx.compose.material3.SwipeToDismissBoxValue.EndToStart
+            val toEdit = state.dismissDirection == androidx.compose.material3.SwipeToDismissBoxValue.StartToEnd
+            androidx.compose.foundation.layout.Box(
+                Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        when {
+                            toDelete -> MaterialTheme.colorScheme.errorContainer
+                            toEdit -> MaterialTheme.colorScheme.primaryContainer
+                            else -> androidx.compose.ui.graphics.Color.Transparent
+                        }
+                    )
+                    .padding(horizontal = 24.dp),
+                contentAlignment = if (toDelete) Alignment.CenterEnd else Alignment.CenterStart,
+            ) {
+                when {
+                    toDelete -> Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = stringResource(R.string.delete),
+                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                    )
+                    toEdit -> Icon(
+                        Icons.Filled.Edit,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                }
+            }
+        },
+        content = { content() },
+    )
+}
+
+/** "Delete …?" confirmation used by swipe-to-delete. */
+@Composable
+fun ConfirmDeleteDialog(title: String, text: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = { Text(text) },
+        confirmButton = {
+            TextButton(onClick = onConfirm, modifier = Modifier.testTag("confirm_delete")) { Text(stringResource(R.string.delete)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss, modifier = Modifier.testTag("cancel_delete")) { Text(stringResource(R.string.cancel)) }
+        },
+    )
 }

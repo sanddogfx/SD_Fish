@@ -12,6 +12,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeLeft
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -163,6 +165,15 @@ class ScreenshotTour {
         shot("11a_past_trip", settleMs = 4000)
         tap("trip_add_past")
         shot("11a2_trip_list_with_past")
+
+        // Swipe a trip to the left: it asks before deleting. Keep it.
+        val pastTripId = runBlocking {
+            SdFishApp.from(InstrumentationRegistry.getInstrumentation().targetContext).database
+                .tripDao().observeWithCounts().first().first { it.catchCount == 0 }.trip.id
+        }
+        compose.onNodeWithTag("swipe_trip_$pastTripId").performTouchInput { swipeLeft() }
+        shot("11a3_swipe_delete_trip")
+        tap("cancel_delete")
 
         // No trip running: adding a fish asks for a trip. Start a new one; the fish form opens right after.
         tap("tab_catches")
