@@ -20,6 +20,7 @@ android {
         targetSdk = 36
         versionCode = buildNumber
         versionName = "0.1.$buildNumber"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -82,4 +83,11 @@ dependencies {
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.osmdroid)
     implementation(libs.coil.compose)
+
+    androidTestImplementation(platform(libs.compose.bom))
+    androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    debugImplementation(libs.compose.ui.test.manifest)
 }
