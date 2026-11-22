@@ -6,7 +6,7 @@ import java.util.Locale
 
 /** App languages. An empty tag means "follow the phone's language". */
 object AppLanguage {
-    val supported = listOf("ru", "pl", "en")
+    val supported = listOf("ru", "be", "pl", "en")
 
     /** Tag picked in the app, or "" when following the system. */
     fun selectedTag(): String {
@@ -25,12 +25,13 @@ object AppLanguage {
         return if (tag.isEmpty()) Locale.getDefault() else Locale.forLanguageTag(tag)
     }
 
-    /** "ru", "pl" or "en": the language texts are shown in (English if the phone uses another one). */
+    /** One of [supported]: the language texts are shown in (English if the phone uses another one). */
     fun current(): String = locale().language.let { if (it in supported) it else "en" }
 
     /** Language names are written in their own language so anyone can find theirs. */
     fun nativeName(tag: String): String = when (tag) {
         "ru" -> "Русский"
+        "be" -> "Беларуская"
         "pl" -> "Polski"
         "en" -> "English"
         else -> tag
