@@ -497,7 +497,11 @@ private fun CatchList(catches: List<CatchEntry>, onOpen: (Long) -> Unit, onDelet
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(catches, key = { it.id }) { entry ->
-            SwipeActions(onEdit = { onOpen(entry.id) }, onDelete = { onDelete(entry) }) {
+            SwipeActions(
+                onEdit = { onOpen(entry.id) },
+                onDelete = { onDelete(entry) },
+                modifier = Modifier.testTag("swipe_catch_${entry.id}"),
+            ) {
                 CatchCard(entry, onClick = { onOpen(entry.id) })
             }
         }

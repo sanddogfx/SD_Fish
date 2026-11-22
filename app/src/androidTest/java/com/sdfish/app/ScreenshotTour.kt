@@ -8,6 +8,7 @@ import com.sdfish.app.data.TripPhoto
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -138,7 +139,9 @@ class ScreenshotTour {
         val fishId = addSampleFishPhotos()
         shot("09_catch_list")
         // Opening the fish shows all its photos.
-        compose.onNodeWithTag("catch_thumb_$fishId", useUnmergedTree = true).performClick()
+        compose.waitForIdle()
+        compose.onNodeWithTag("swipe_catch_$fishId").performClick()
+        compose.waitUntil(10_000) { compose.onAllNodesWithTag("catch_photos").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithTag("catch_photos").performScrollTo()
         shot("09b_fish_photos", settleMs = 3000)
         compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
