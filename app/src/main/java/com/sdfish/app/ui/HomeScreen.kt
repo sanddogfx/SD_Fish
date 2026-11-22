@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -94,6 +95,7 @@ fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
                 NavigationBarItem(
                     selected = tab == 1,
                     onClick = { tab = 1 },
+                    modifier = Modifier.testTag("tab_map"),
                     icon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
                     label = { Text(stringResource(R.string.tab_map)) },
                 )
@@ -102,6 +104,7 @@ fun HomeScreen(onAdd: () -> Unit, onOpen: (Long) -> Unit) {
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = onAdd,
+                modifier = Modifier.testTag("add_catch"),
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
                 text = { Text(stringResource(R.string.add_catch)) },
             )
