@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -200,13 +201,17 @@ private fun FullScreenPlacePicker(
     ) {
         androidx.compose.material3.Surface(Modifier.fillMaxSize().testTag("place_map_full")) {
             Column(Modifier.fillMaxSize().systemBarsPadding()) {
-                androidx.compose.foundation.layout.Box(Modifier.weight(1f).fillMaxWidth()) {
+                androidx.compose.foundation.layout.Box(Modifier.weight(1f).fillMaxWidth().clipToBounds()) {
                     LocationPicker(
                         latitude, longitude, recenterToken, editable = true, onPick = onPick,
-                        modifier = Modifier.fillMaxSize(), centerOnStart = true,
+                        modifier = Modifier.fillMaxSize().clipToBounds(), centerOnStart = true,
                     )
                 }
-                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                // The map view draws past its bounds; a solid panel keeps the buttons readable.
+                Column(
+                    Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface).padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     Text(
                         stringResource(R.string.location_hint),
                         style = MaterialTheme.typography.bodySmall,
