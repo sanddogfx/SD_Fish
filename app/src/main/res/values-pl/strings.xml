@@ -143,4 +143,22 @@
     <string name="count_label">Liczba</string>
     <string name="total_weight_label">Waga łączna, kg</string>
     <string name="times_count">× %1$d</string>
+    <string name="tab_stats">Statystyki</string>
+    <string name="stats_month">Miesiąc</string>
+    <string name="stats_year">Rok</string>
+    <string name="stats_all">Cały czas</string>
+    <string name="stats_trips">Wypraw</string>
+    <string name="stats_hours">Na wodzie</string>
+    <string name="stats_fish">Ryb</string>
+    <string name="stats_weight">Waga</string>
+    <string name="stats_per_hour">Ryb na godzinę na wyprawach</string>
+    <string name="stats_records">Rekordy</string>
+    <string name="stats_heaviest">Najcięższa ryba</string>
+    <string name="stats_longest">Najdłuższa ryba</string>
+    <string name="stats_by_species">Według gatunków</string>
+    <string name="stats_by_method">Według metod połowu</string>
+    <string name="stats_empty">W tym okresie nie ma jeszcze wypraw ani ryb.</string>
+    <string name="stats_hours_value">%1$s h</string>
+    <string name="stats_per_hour_value">%1$s ryb/h</string>
+    <string name="stats_trips_count">wypraw: %1$d</string>
 </resources>

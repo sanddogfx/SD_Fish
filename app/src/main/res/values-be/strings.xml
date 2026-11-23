@@ -143,4 +143,22 @@
     <string name="count_label">Колькасць</string>
     <string name="total_weight_label">Агульная вага, кг</string>
     <string name="times_count">× %1$d</string>
+    <string name="tab_stats">Статыстыка</string>
+    <string name="stats_month">Месяц</string>
+    <string name="stats_year">Год</string>
+    <string name="stats_all">Увесь час</string>
+    <string name="stats_trips">Рыбалак</string>
+    <string name="stats_hours">На вадзе</string>
+    <string name="stats_fish">Рыб</string>
+    <string name="stats_weight">Вага</string>
+    <string name="stats_per_hour">Рыб за гадзіну на рыбалках</string>
+    <string name="stats_records">Рэкорды</string>
+    <string name="stats_heaviest">Самая цяжкая рыба</string>
+    <string name="stats_longest">Самая доўгая рыба</string>
+    <string name="stats_by_species">Па відах</string>
+    <string name="stats_by_method">Па спосабах лоўлі</string>
+    <string name="stats_empty">За гэты перыяд пакуль няма рыбалак і рыбы.</string>
+    <string name="stats_hours_value">%1$s г</string>
+    <string name="stats_per_hour_value">%1$s рыб/г</string>
+    <string name="stats_trips_count">рыбалак: %1$d</string>
 </resources>
