@@ -42,6 +42,7 @@ class MigrationTest {
             assertEquals("pike", catches[0].species)
             assertEquals("old catch", catches[0].note)
             assertNull(catches[0].tripId)
+            assertEquals(1, catches[0].count)
             assertEquals(0, runBlocking { room.tripDao().observeWithCounts().first() }.size)
             assertEquals(0, runBlocking { room.trackDao().observeByTrip(1).first() }.size)
             assertEquals(0, runBlocking { room.tripPhotoDao().byTrip(1) }.size)

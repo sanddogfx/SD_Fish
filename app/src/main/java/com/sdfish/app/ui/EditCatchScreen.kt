@@ -150,11 +150,21 @@ fun EditCatchScreen(catchId: Long, newInTripId: Long, onDone: () -> Unit) {
             // --- Fish ---
             SectionTitle(stringResource(R.string.section_fish))
             SpeciesField(s.speciesText) { text -> vm.update { it.copy(speciesText = text) } }
+            // Several fish of one species can go in one entry: count and their total weight.
+            val several = (s.countText.trim().toIntOrNull() ?: 1) > 1
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = s.countText,
+                    onValueChange = { v -> vm.update { it.copy(countText = v.filter(Char::isDigit).take(4)) } },
+                    label = { Text(stringResource(R.string.count_label)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier.weight(0.8f).testTag("count"),
+                )
                 OutlinedTextField(
                     value = s.weightText,
                     onValueChange = { v -> vm.update { it.copy(weightText = v) } },
-                    label = { Text(stringResource(R.string.weight_label)) },
+                    label = { Text(stringResource(if (several) R.string.total_weight_label else R.string.weight_label)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
                     modifier = Modifier.weight(1f).testTag("weight"),

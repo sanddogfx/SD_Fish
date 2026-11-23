@@ -140,4 +140,7 @@
         <item>Апошняя чвэрць</item>
         <item>Стары месяц</item>
     </string-array>
+    <string name="count_label">Колькасць</string>
+    <string name="total_weight_label">Агульная вага, кг</string>
+    <string name="times_count">× %1$d</string>
 </resources>

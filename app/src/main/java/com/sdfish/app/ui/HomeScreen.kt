@@ -568,6 +568,7 @@ private fun CatchCard(entry: CatchEntry, onClick: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 val details = listOfNotNull(
+                    entry.count.takeIf { it > 1 }?.let { stringResource(R.string.times_count, it) },
                     entry.weightKg?.let { stringResource(R.string.weight_kg, Formats.number(it)) },
                     entry.lengthCm?.let { stringResource(R.string.length_cm, Formats.number(it)) },
                 ).joinToString(" · ")

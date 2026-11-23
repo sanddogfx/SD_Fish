@@ -140,4 +140,7 @@
         <item>Последняя четверть</item>
         <item>Убывающий серп</item>
     </string-array>
+    <string name="count_label">Кол-во</string>
+    <string name="total_weight_label">Общий вес, кг</string>
+    <string name="times_count">× %1$d</string>
 </resources>

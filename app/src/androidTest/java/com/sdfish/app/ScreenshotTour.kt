@@ -16,6 +16,8 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performTextClearance
 import com.sdfish.app.data.FishingTrip
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.swipeUp
@@ -174,6 +176,19 @@ class ScreenshotTour {
         compose.onNodeWithTag("catch_photos").performScrollTo()
         shot("09b_fish_photos", settleMs = 3000)
         compose.runOnUiThread { compose.activity.onBackPressedDispatcher.onBackPressed() }
+
+        // Many small fish of one species go in one entry: count and total weight.
+        tap("add_fish")
+        compose.onNodeWithTag("species").performTextInput("Płoć")
+        tap("species_option_roach")
+        compose.onNodeWithTag("count").performTextClearance()
+        compose.onNodeWithTag("count").performTextInput("12")
+        compose.onNodeWithTag("weight").performTextInput("1,8")
+        hideKeyboard()
+        shot("09c_group_fish")
+        tap("save")
+        compose.onNodeWithText("× 12", substring = true, useUnmergedTree = true).assertExists()
+        shot("09d_catch_list_group")
 
         // The emulator does not move, so add a short walk along the shore to show the route.
         addSampleRoute()

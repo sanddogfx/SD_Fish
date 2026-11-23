@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface TripDao {
     @Transaction
     @Query(
-        "SELECT trips.*, (SELECT COUNT(*) FROM catches WHERE catches.tripId = trips.id) AS catchCount, " +
+        "SELECT trips.*, (SELECT COALESCE(SUM(count), 0) FROM catches WHERE catches.tripId = trips.id) AS catchCount, " +
             "(SELECT SUM(weightKg) FROM catches WHERE catches.tripId = trips.id) AS totalWeightKg " +
             "FROM trips ORDER BY startTime DESC"
     )
