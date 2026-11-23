@@ -8,7 +8,7 @@ enum class StatsPeriod { MONTH, YEAR, ALL }
 data class SpeciesStats(val species: String, val count: Int, val weightKg: Double?)
 
 data class MethodStats(val method: String, val trips: Int, val hours: Double, val fish: Int) {
-    val fishPerHour: Double? get() = if (hours > 0.0) fish / hours else null
+    val fishPerHour: Double? get() = if (hours >= StatsCalculator.MIN_HOURS_FOR_RATE) fish / hours else null
 }
 
 data class Stats(
@@ -30,6 +30,8 @@ data class Stats(
 /** Statistics over trips and catches; plain Kotlin so it can move to shared code later. */
 object StatsCalculator {
     private const val HOUR = 3_600_000.0
+    /** Below this much time on the water a "fish per hour" figure is meaningless. */
+    const val MIN_HOURS_FOR_RATE = 0.5
 
     /** Start of the period containing [now], or null for all time. */
     fun periodStart(period: StatsPeriod, now: Long, zone: TimeZone = TimeZone.getDefault()): Long? {
@@ -84,7 +86,7 @@ object StatsCalculator {
             hours = hours,
             fish = c.sumOf { it.count },
             weightKg = weights.takeIf { it.isNotEmpty() }?.sum(),
-            fishPerHour = if (hours > 0.0 && tripById.isNotEmpty()) fishOnTrips / hours else null,
+            fishPerHour = if (hours >= MIN_HOURS_FOR_RATE && tripById.isNotEmpty()) fishOnTrips / hours else null,
             bySpecies = bySpecies,
             byMethod = byMethod,
             heaviest = singles.filter { it.weightKg != null }.maxByOrNull { it.weightKg!! },
