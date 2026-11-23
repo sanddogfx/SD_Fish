@@ -206,6 +206,11 @@ class ScreenshotTour {
         shot("10c_trip_photos")
         compose.onNodeWithTag("trip_total_weight").performScrollTo()
         shot("10d_trip_weight")
+        // Changing the place opens a full-screen map; Cancel keeps the old place.
+        compose.onNodeWithTag("edit_place").performScrollTo().performClick()
+        compose.onNodeWithTag("place_map_full").assertExists()
+        shot("10e_place_full", settleMs = 4000)
+        tap("place_cancel")
         tap("trip_finish")
         tap("tab_trips")
         shot("11_trip_list")

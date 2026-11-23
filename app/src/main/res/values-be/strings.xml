@@ -161,4 +161,6 @@
     <string name="stats_hours_value">%1$s г</string>
     <string name="stats_per_hour_value">%1$s рыб/г</string>
     <string name="stats_trips_count">рыбалак: %1$d</string>
+    <string name="done">Гатова</string>
+    <string name="open_big_map">Адкрыць вялікую карту</string>
 </resources>

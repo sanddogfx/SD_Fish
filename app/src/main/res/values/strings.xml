@@ -163,4 +163,6 @@
     <string name="stats_hours_value">%1$s h</string>
     <string name="stats_per_hour_value">%1$s fish/h</string>
     <string name="stats_trips_count">trips: %1$d</string>
+    <string name="done">Done</string>
+    <string name="open_big_map">Open big map</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -111,7 +112,19 @@ fun PlaceSection(
     startLocked: Boolean = false,
 ) {
     var editable by rememberSaveable { mutableStateOf(!startLocked) }
+    var fullScreen by rememberSaveable { mutableStateOf(false) }
     LocationPicker(latitude, longitude, recenterToken, editable, onPick)
+    if (fullScreen) {
+        FullScreenPlacePicker(
+            latitude = latitude,
+            longitude = longitude,
+            recenterToken = recenterToken,
+            locating = status == LocationStatus.Locating,
+            onPick = onPick,
+            onRequestLocation = onRequestLocation,
+            onDone = { fullScreen = false; editable = true },
+        )
+    }
     when (status) {
         LocationStatus.Locating -> {
             Text(stringResource(R.string.locating))
@@ -148,16 +161,75 @@ fun PlaceSection(
                 Text(stringResource(R.string.refresh_location))
             }
         } else {
-            TextButton(onClick = { editable = true }, modifier = Modifier.testTag("edit_place")) {
+            // Changing the place is easier on a big map.
+            TextButton(onClick = { fullScreen = true }, modifier = Modifier.testTag("edit_place")) {
                 Icon(Icons.Filled.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(4.dp))
                 Text(stringResource(R.string.change_place))
             }
         }
     }
+    if (editable) {
+        TextButton(onClick = { fullScreen = true }, modifier = Modifier.testTag("open_place_map")) {
+            Icon(Icons.Filled.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(4.dp))
+            Text(stringResource(R.string.open_big_map))
+        }
+    }
 }
 
-/** Small map: shows the point; when [editable], tap the map or drag the pin to move it. */
+/** The whole screen as a map for moving the place; Cancel puts the place back. */
+@Composable
+private fun FullScreenPlacePicker(
+    latitude: Double?,
+    longitude: Double?,
+    recenterToken: Int,
+    locating: Boolean,
+    onPick: (Double, Double) -> Unit,
+    onRequestLocation: () -> Unit,
+    onDone: () -> Unit,
+) {
+    val original = remember { if (latitude != null && longitude != null) latitude to longitude else null }
+    val cancel = {
+        original?.let { (lat, lon) -> onPick(lat, lon) }
+        onDone()
+    }
+    androidx.compose.ui.window.Dialog(
+        onDismissRequest = cancel,
+        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
+    ) {
+        androidx.compose.material3.Surface(Modifier.fillMaxSize().testTag("place_map_full")) {
+            Column(Modifier.fillMaxSize().systemBarsPadding()) {
+                androidx.compose.foundation.layout.Box(Modifier.weight(1f).fillMaxWidth()) {
+                    LocationPicker(
+                        latitude, longitude, recenterToken, editable = true, onPick = onPick,
+                        modifier = Modifier.fillMaxSize(), centerOnStart = true,
+                    )
+                }
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        stringResource(R.string.location_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    TextButton(onClick = onRequestLocation, enabled = !locating) {
+                        Icon(Icons.Filled.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text(stringResource(R.string.refresh_location))
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
+                        TextButton(onClick = cancel, modifier = Modifier.testTag("place_cancel")) { Text(stringResource(R.string.cancel)) }
+                        androidx.compose.material3.Button(onClick = onDone, modifier = Modifier.testTag("place_done")) {
+                            Text(stringResource(R.string.done))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Map with the place: tap the map or drag the pin to move it when [editable]. */
 @Composable
 private fun LocationPicker(
     latitude: Double?,
@@ -165,6 +237,8 @@ private fun LocationPicker(
     recenterToken: Int,
     editable: Boolean,
     onPick: (Double, Double) -> Unit,
+    modifier: Modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(12.dp)),
+    centerOnStart: Boolean = false,
 ) {
     val context = LocalContext.current
     val mapView = rememberMapView()
@@ -197,6 +271,13 @@ private fun LocationPicker(
         })
     }
 
+    LaunchedEffect(Unit) {
+        if (centerOnStart && latitude != null && longitude != null) {
+            mapView.controller.setZoom(16.0)
+            mapView.controller.setCenter(GeoPoint(latitude, longitude))
+        }
+    }
+
     LaunchedEffect(recenterToken) {
         if (recenterToken > 0 && latitude != null && longitude != null) {
             mapView.controller.setZoom(15.0)
@@ -205,10 +286,7 @@ private fun LocationPicker(
     }
 
     AndroidView(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-            .clip(RoundedCornerShape(12.dp)),
+        modifier = modifier,
         factory = {
             mapView.apply {
                 if (!overlays.contains(tapOverlay)) overlays.add(0, tapOverlay)
