@@ -439,6 +439,8 @@ private fun SettingsDialog(onDismiss: () -> Unit) {
                         Text(if (tag.isEmpty()) stringResource(R.string.language_system) else AppLanguage.nativeName(tag))
                     }
                 }
+                Spacer(Modifier.height(12.dp))
+                BackupSection()
             }
         },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.close)) } },
