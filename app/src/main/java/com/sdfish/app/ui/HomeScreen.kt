@@ -179,7 +179,8 @@ fun HomeScreen(
             )
             // The action buttons sit in their own bar above the tabs, so they never cover the list.
             Column {
-                Surface(color = NavigationBarDefaults.containerColor) {
+                // The statistics tab needs no action unless a trip is running.
+                if (activeTrip != null || tab != 3) Surface(color = NavigationBarDefaults.containerColor) {
                     Box(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 4.dp)) {
                         val active = activeTrip
                         when {
@@ -248,6 +249,14 @@ fun HomeScreen(
                         icon = { Icon(Icons.Filled.LocationOn, contentDescription = null) },
                         label = { Text(stringResource(R.string.tab_map)) },
                     )
+                    NavigationBarItem(
+                        selected = tab == 3,
+                        onClick = { tab = 3 },
+                        colors = navColors,
+                        modifier = Modifier.testTag("tab_stats"),
+                        icon = { Icon(androidx.compose.ui.res.painterResource(R.drawable.ic_stats), contentDescription = null) },
+                        label = { Text(stringResource(R.string.tab_stats), maxLines = 1) },
+                    )
                 }
             }
         },
@@ -271,6 +280,7 @@ fun HomeScreen(
                     list == null || tripList == null -> Unit
                     tab == 0 -> TripList(tripList, onOpenTrip, onDelete = { tripToDelete = it })
                     tab == 1 -> CatchList(list, onOpen, onDelete = { catchToDelete = it })
+                    tab == 3 -> StatsScreen(tripList, list, onOpen)
                     else -> CatchMap(list, onOpen)
                 }
             }

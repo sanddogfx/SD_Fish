@@ -248,6 +248,14 @@ class ScreenshotTour {
         val buttons = compose.onNodeWithTag("add_past_trip").getUnclippedBoundsInRoot()
         check(lastCard.bottom <= buttons.top) { "last card ${lastCard.bottom} overlaps buttons ${buttons.top}" }
 
+        // Statistics: totals, records, species and methods for a period.
+        tap("tab_stats")
+        shot("11a5_stats_month")
+        compose.onNodeWithTag("stats_fish").assertExists()
+        tap("stats_period_all")
+        compose.onNodeWithTag("stats").performTouchInput { swipeUp() }
+        shot("11a6_stats_all_bottom")
+
         // No trip running: adding a fish asks for a trip. Start a new one; the fish form opens right after.
         tap("tab_catches")
         tap("add_catch")
@@ -271,6 +279,8 @@ class ScreenshotTour {
         shot("15_trips_russian")
         tap("tab_catches")
         shot("16_catches_russian")
+        tap("tab_stats")
+        shot("16b_stats_russian")
 
         tap("settings")
         tap("language_be")

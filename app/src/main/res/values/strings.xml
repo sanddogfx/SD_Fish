@@ -145,4 +145,22 @@
     <string name="count_label">Count</string>
     <string name="total_weight_label">Total weight, kg</string>
     <string name="times_count">× %1$d</string>
+    <string name="tab_stats">Stats</string>
+    <string name="stats_month">Month</string>
+    <string name="stats_year">Year</string>
+    <string name="stats_all">All time</string>
+    <string name="stats_trips">Trips</string>
+    <string name="stats_hours">On the water</string>
+    <string name="stats_fish">Fish</string>
+    <string name="stats_weight">Weight</string>
+    <string name="stats_per_hour">Fish per hour on trips</string>
+    <string name="stats_records">Records</string>
+    <string name="stats_heaviest">Heaviest fish</string>
+    <string name="stats_longest">Longest fish</string>
+    <string name="stats_by_species">By species</string>
+    <string name="stats_by_method">By fishing method</string>
+    <string name="stats_empty">No trips or fish in this period yet.</string>
+    <string name="stats_hours_value">%1$s h</string>
+    <string name="stats_per_hour_value">%1$s fish/h</string>
+    <string name="stats_trips_count">trips: %1$d</string>
 </resources>
