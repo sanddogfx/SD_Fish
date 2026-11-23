@@ -165,4 +165,14 @@
     <string name="stats_trips_count">trips: %1$d</string>
     <string name="done">Done</string>
     <string name="open_big_map">Open big map</string>
+    <string name="backup_title">Backup</string>
+    <string name="backup_hint">Saves all trips, fish and photos to one file. In the window that opens, pick Google Drive to keep it in the cloud. On a new phone, install the app and restore from that file.</string>
+    <string name="backup_save">Save backup</string>
+    <string name="backup_restore">Restore from backup</string>
+    <string name="backup_saved">Backup saved</string>
+    <string name="backup_failed">Could not save the backup</string>
+    <string name="restore_confirm_title">Restore from backup?</string>
+    <string name="restore_confirm_text">All trips, fish and photos on this phone will be replaced by the ones in the backup. The app will restart.</string>
+    <string name="restore_action">Restore</string>
+    <string name="restore_failed">Could not restore: this is not a Loopcast Fishing backup, or it was made by a newer version of the app.</string>
 </resources>

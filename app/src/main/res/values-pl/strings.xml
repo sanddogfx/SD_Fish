@@ -163,4 +163,14 @@
     <string name="stats_trips_count">wypraw: %1$d</string>
     <string name="done">Gotowe</string>
     <string name="open_big_map">Otwórz dużą mapę</string>
+    <string name="backup_title">Kopia zapasowa</string>
+    <string name="backup_hint">Zapisuje wszystkie wyprawy, ryby i zdjęcia w jednym pliku. W oknie, które się otworzy, wybierz Dysk Google, aby kopia była w chmurze. Na nowym telefonie zainstaluj aplikację i przywróć dane z tego pliku.</string>
+    <string name="backup_save">Zapisz kopię</string>
+    <string name="backup_restore">Przywróć z kopii</string>
+    <string name="backup_saved">Kopia zapisana</string>
+    <string name="backup_failed">Nie udało się zapisać kopii</string>
+    <string name="restore_confirm_title">Przywrócić z kopii?</string>
+    <string name="restore_confirm_text">Wszystkie wyprawy, ryby i zdjęcia na tym telefonie zostaną zastąpione danymi z kopii. Aplikacja uruchomi się ponownie.</string>
+    <string name="restore_action">Przywróć</string>
+    <string name="restore_failed">Nie udało się przywrócić: to nie jest kopia Loopcast Fishing albo została zrobiona nowszą wersją aplikacji.</string>
 </resources>

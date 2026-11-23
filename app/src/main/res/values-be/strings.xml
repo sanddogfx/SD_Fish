@@ -163,4 +163,14 @@
     <string name="stats_trips_count">рыбалак: %1$d</string>
     <string name="done">Гатова</string>
     <string name="open_big_map">Адкрыць вялікую карту</string>
+    <string name="backup_title">Рэзервовая копія</string>
+    <string name="backup_hint">Захоўвае ўсе рыбалкі, рыбу і фота ў адзін файл. У акне, што адкрыецца, выберы Google Дыск, каб копія захоўвалася ў воблаку. На новым тэлефоне ўсталюй праграму і аднаві даныя з гэтага файла.</string>
+    <string name="backup_save">Захаваць копію</string>
+    <string name="backup_restore">Аднавіць з копіі</string>
+    <string name="backup_saved">Копія захавана</string>
+    <string name="backup_failed">Не ўдалося захаваць копію</string>
+    <string name="restore_confirm_title">Аднавіць з копіі?</string>
+    <string name="restore_confirm_text">Усе рыбалкі, рыба і фота на гэтым тэлефоне будуць заменены данымі з копіі. Праграма перазапусціцца.</string>
+    <string name="restore_action">Аднавіць</string>
+    <string name="restore_failed">Не ўдалося аднавіць: гэта не копія Loopcast Fishing або яна зроблена навейшай версіяй праграмы.</string>
 </resources>
