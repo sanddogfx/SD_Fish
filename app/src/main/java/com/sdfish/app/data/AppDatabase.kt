@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [CatchEntry::class, FishingTrip::class, TrackPoint::class, TripPhoto::class, CatchPhoto::class, TripWeather::class], version = 6, exportSchema = true)
+@Database(entities = [CatchEntry::class, FishingTrip::class, TrackPoint::class, TripPhoto::class, CatchPhoto::class, TripWeather::class], version = 7, exportSchema = true)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun catchDao(): CatchDao
     abstract fun tripDao(): TripDao
@@ -82,9 +82,16 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        /** Version 7 lets one entry stand for several fish of a species. */
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `catches` ADD COLUMN `count` INTEGER NOT NULL DEFAULT 1")
+            }
+        }
+
         fun create(context: Context, name: String = NAME): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, name)
-                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                 .build()
     }
 }

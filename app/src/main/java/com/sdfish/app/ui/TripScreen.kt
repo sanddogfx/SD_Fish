@@ -225,7 +225,7 @@ fun TripScreen(
             )
 
             if (!vm.isNew) {
-                SectionTitle(stringResource(R.string.trip_catches, catches.size))
+                SectionTitle(stringResource(R.string.trip_catches, catches.sumOf { it.count }))
                 val totalWeight = catches.mapNotNull { it.weightKg }.takeIf { it.isNotEmpty() }?.sum()
                 if (totalWeight != null) {
                     Text(
@@ -297,6 +297,7 @@ private fun TripCatchRow(entry: CatchEntry, onClick: () -> Unit) {
         Column(Modifier.weight(1f)) {
             Text(speciesLabel(entry), style = MaterialTheme.typography.bodyLarge)
             val details = listOfNotNull(
+                entry.count.takeIf { it > 1 }?.let { stringResource(R.string.times_count, it) },
                 entry.weightKg?.let { stringResource(R.string.weight_kg, Formats.number(it)) },
                 entry.lengthCm?.let { stringResource(R.string.length_cm, Formats.number(it)) },
             ).joinToString(" · ")

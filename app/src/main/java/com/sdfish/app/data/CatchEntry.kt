@@ -1,5 +1,6 @@
 package com.sdfish.app.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -23,4 +24,7 @@ data class CatchEntry(
     val tripId: Long? = null,
     /** A [FishingMethod.id], if known. */
     val method: String? = null,
+    /** How many fish this entry stands for; with more than one, [weightKg] is their total weight. */
+    @ColumnInfo(defaultValue = "1")
+    val count: Int = 1,
 )

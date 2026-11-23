@@ -140,4 +140,7 @@
         <item>Ostatnia kwadra</item>
         <item>Ubywający sierp</item>
     </string-array>
+    <string name="count_label">Liczba</string>
+    <string name="total_weight_label">Waga łączna, kg</string>
+    <string name="times_count">× %1$d</string>
 </resources>

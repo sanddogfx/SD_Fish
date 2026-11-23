@@ -142,4 +142,7 @@
         <item>Last quarter</item>
         <item>Waning crescent</item>
     </string-array>
+    <string name="count_label">Count</string>
+    <string name="total_weight_label">Total weight, kg</string>
+    <string name="times_count">× %1$d</string>
 </resources>

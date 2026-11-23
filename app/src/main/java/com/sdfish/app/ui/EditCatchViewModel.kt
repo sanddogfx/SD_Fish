@@ -28,6 +28,8 @@ data class EditState(
     val speciesText: String = "",
     val weightText: String = "",
     val lengthText: String = "",
+    /** How many fish of this species; with more than one, the weight is their total. */
+    val countText: String = "1",
     /** Photo files of this fish; the first one is shown in lists. */
     val photos: List<String> = emptyList(),
     val note: String = "",
@@ -98,6 +100,7 @@ class EditCatchViewModel(
                         speciesText = if (e.species.isBlank()) "" else SpeciesCatalog.displayName(e.species),
                         weightText = Formats.number(e.weightKg),
                         lengthText = Formats.number(e.lengthCm),
+                        countText = e.count.toString(),
                         photos = originalPhotos,
                         note = e.note,
                         method = e.method,
@@ -184,6 +187,7 @@ class EditCatchViewModel(
         note = state.note.trim(),
         tripId = state.tripId,
         method = state.method,
+        count = state.countText.trim().toIntOrNull()?.coerceAtLeast(1) ?: 1,
     )
 
     fun save(onSaved: () -> Unit) {
